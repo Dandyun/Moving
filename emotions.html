@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MOVE — Emotions">
+  <title>MOVE — Emotions</title>
+
+  <link rel="stylesheet" href="https://use.typekit.net/rqf0eoo.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="emotions.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
+  <script src="emotions-data.js" defer></script>
+  <script src="emotions.js" defer></script>
+</head>
+<body>
+  <main class="emotions-page">
+
+    <nav class="dot-nav" aria-label="Primary navigation">
+      <a class="dot-link" href="about.html" data-label="About" aria-label="About"></a>
+      <a class="dot-link" href="photos.html" data-label="Photos" aria-label="Photos"></a>
+      <a class="dot-link is-active" href="emotions.html" data-label="Emotions" aria-label="Emotions"></a>
+      <a class="dot-link" href="move.html" data-label="Move" aria-label="Move"></a>
+    </nav>
+
+    <button id="global-filter-button" class="global-filter-button" type="button" aria-expanded="false" aria-controls="global-filter-drawer">
+      Filter
+    </button>
+
+    <div class="horizontal-shell" id="horizontal-shell">
+      <div class="horizontal-track" id="horizontal-track">
+
+        <section class="panel timeline-panel" id="emotional-timeline">
+          <div class="panel-head">
+            <div>
+              <p class="panel-number">01</p>
+              <h1>Emotional Movement</h1>
+            </div>
+            <p class="panel-description">
+              Each point is one photograph. Time moves from left to right, while vertical position
+              shows its emotion score from −5 to +5.
+            </p>
+          </div>
+
+          <div class="emotion-color-key" aria-label="Emotion color key">
+            <p class="color-key-title">Emotion color</p>
+            <div class="color-key-items">
+              <span><i style="--key-color:#f6c744"></i>Joy</span>
+              <span><i style="--key-color:#6dbb4b"></i>Trust</span>
+              <span><i style="--key-color:#1c9d50"></i>Fear</span>
+              <span><i style="--key-color:#39b7df"></i>Surprise</span>
+              <span><i style="--key-color:#2d5daa"></i>Sadness</span>
+              <span><i style="--key-color:#9b5aa5"></i>Disgust</span>
+              <span><i style="--key-color:#ed2f32"></i>Anger</span>
+              <span><i style="--key-color:#f36f3f"></i>Anticipation</span>
+            </div>
+          </div>
+
+          <div class="timeline-meta">
+            <p><span id="timeline-count">0</span> visible photographs</p>
+            <p id="timeline-filter-label">All filters</p>
+          </div>
+
+          <div class="timeline-shell">
+            <svg id="timeline-chart" role="img" aria-label="Filtered emotional timeline"></svg>
+            <div id="timeline-empty" class="empty-state" hidden>No photographs match the current filters.</div>
+          </div>
+
+          <div class="axis-note">
+            <span>Negative emotion</span>
+            <span>Capture time →</span>
+            <span>Positive emotion</span>
+          </div>
+
+          <p class="hover-note">Hover a point to preview the photograph · Click to open its details →</p>
+        </section>
+
+        <section class="panel detail-panel" id="photo-detail-panel">
+          <div class="panel-head detail-head">
+            <div>
+              <p class="panel-number">02</p>
+              <h2>Selected Photograph</h2>
+            </div>
+            <p class="panel-description">
+              Click any point in Emotional Movement to inspect the photograph and its recorded data.
+            </p>
+          </div>
+
+          <div class="photo-detail" id="photo-detail">
+            <div class="detail-image-wrap">
+              <img id="detail-image" src="" alt="" hidden>
+              <p id="detail-placeholder">Click a point on the timeline to open the photograph and its data.</p>
+            </div>
+
+            <div class="detail-info">
+              <p class="eyebrow">Selected photograph</p>
+              <p class="detail-id" id="detail-photo-id">—</p>
+              <dl>
+                <div><dt>Date & time</dt><dd id="detail-date">—</dd></div>
+                <div><dt>Location</dt><dd id="detail-location">—</dd></div>
+                <div><dt>Place type</dt><dd id="detail-place">—</dd></div>
+                <div><dt>With group</dt><dd id="detail-group">—</dd></div>
+                <div><dt>Subject type</dt><dd id="detail-subject">—</dd></div>
+                <div><dt>People visible</dt><dd id="detail-people">—</dd></div>
+                <div><dt>Emotion</dt><dd id="detail-emotion">—</dd></div>
+                <div><dt>Emotion score</dt><dd id="detail-score">—</dd></div>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel filters-panel" id="emotion-filters">
+          <div class="panel-head">
+            <div>
+              <p class="panel-number">03</p>
+              <h2>Emotion by Filters</h2>
+            </div>
+            <p class="panel-description">
+              Circle area and bar length change according to the number of photographs
+              that match the selected filters.
+            </p>
+          </div>
+
+          <div class="emotion-filter-layout">
+            <div class="emotion-models">
+              <div class="bubble-panel">
+                <svg id="emotion-bubbles" role="img" aria-label="Eight emotion circles sized by filtered photograph count"></svg>
+              </div>
+              <div class="bar-panel">
+                <svg id="emotion-bars" role="img" aria-label="Horizontal emotion count bars for current filters"></svg>
+              </div>
+            </div>
+
+            <aside id="global-filter-drawer" class="filter-panel global-filter-drawer" aria-label="Global archive filters" aria-hidden="true">
+              <div class="filter-panel-heading">
+                <p class="eyebrow">Filter archive</p>
+                <div class="filter-panel-actions">
+                  <button id="reset-filters" class="text-button" type="button">Reset all</button>
+                  <button id="close-global-filter" class="global-filter-close" type="button" aria-label="Close filters">×</button>
+                </div>
+              </div>
+
+              <label class="filter"><span>Country</span><select id="country-filter"><option value="all">All countries</option></select></label>
+              <label class="filter"><span>City</span><select id="city-filter"><option value="all">All cities</option></select></label>
+              <label class="filter"><span>Place type</span><select id="place-filter"><option value="all">All place types</option></select></label>
+              <label class="filter"><span>With group</span><select id="group-filter"><option value="all">All groups</option></select></label>
+              <label class="filter"><span>Subject type</span><select id="subject-filter"><option value="all">All subjects</option></select></label>
+              <label class="filter"><span>People visible</span><select id="people-filter"><option value="all">All people</option></select></label>
+
+              <div class="filter-summary">
+                <span id="filtered-count">0</span>
+                <small>photographs in current filter</small>
+              </div>
+            </aside>
+          </div>
+
+          <div id="selected-emotion-strip" hidden>
+            <span id="selected-emotion-name"></span>
+            <button id="clear-emotion" type="button">clear</button>
+          </div>
+          <div id="gallery-section" hidden>
+            <p id="gallery-caption"></p>
+            <div id="photo-gallery"></div>
+          </div>
+        </section>
+
+        <section class="panel compare-panel" id="compare-emotion">
+          <div class="panel-head">
+            <div>
+              <p class="panel-number">04</p>
+              <h2>Comparing Emotion</h2>
+            </div>
+            <p class="panel-description">
+              Add multiple filters to compare emotional composition. Every layer uses percentages,
+              so groups of different sizes remain comparable. Line style identifies each filter;
+              color remains reserved for emotions.
+            </p>
+          </div>
+
+          <div class="compare-controls">
+            <label class="filter compare-field">
+              <span>Compare by</span>
+              <select id="compare-dimension">
+                <option value="country">Country</option>
+                <option value="city">City</option>
+                <option value="place_type">Place type</option>
+                <option value="with_group">With group</option>
+                <option value="subject_type">Subject type</option>
+                <option value="people_visible">People visible</option>
+              </select>
+            </label>
+
+            <label class="filter compare-field">
+              <span>Value</span>
+              <select id="compare-value"></select>
+            </label>
+
+            <button id="add-comparison" class="outline-button" type="button">+ Add filter</button>
+          </div>
+
+          <div class="comparison-layout">
+            <div class="radar-shell">
+              <svg id="comparison-radar" role="img" aria-label="Radar chart comparing emotional distributions across filters"></svg>
+            </div>
+            <aside class="comparison-legend" id="comparison-legend">
+              <p class="empty-copy">Add a filter to begin comparing emotions.</p>
+            </aside>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="scroll-hint">SCROLL →</div>
+    <p id="data-status" hidden></p>
+    <div class="tooltip" id="tooltip" hidden></div>
+  </main>
+</body>
+</html>

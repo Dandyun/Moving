@@ -1,0 +1,473 @@
+:root {
+  --ink:#0b0b0b;
+  --paper:#fff;
+  --title-font:"fenway-banner","Fenway Banner",Georgia,serif;
+  --heading-font:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body-font:"Inter",Arial,sans-serif;
+  --emotion-joy:#f6c744;
+  --emotion-trust:#6dbb4b;
+  --emotion-fear:#1c9d50;
+  --emotion-surprise:#39b7df;
+  --emotion-sadness:#2d5daa;
+  --emotion-disgust:#9b5aa5;
+  --emotion-anger:#ed2f32;
+  --emotion-anticipation:#f36f3f;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;color:var(--ink)}
+body{font-family:var(--body-font)}
+button,select{font:inherit}
+button{color:inherit}
+a{color:inherit;text-decoration:none}
+
+.photos-page{position:relative;width:100vw;height:100vh;overflow:hidden;background:#fff}
+
+/* Full-height white navigation wall. */
+.photos-page::before{
+  content:"";
+  position:fixed;
+  z-index:70;
+  left:0;
+  top:0;
+  width:200px;
+  height:100vh;
+    background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events:none;
+}
+
+/* LEFT NAV — matched to the About page */
+.dot-nav{
+  position:fixed;
+  z-index:80;
+  left:calc(4.8vw - 20px);
+  top:50%;
+  display:grid;
+  gap:clamp(30px,4vh,40px);
+  padding:18px 20px;
+  background:transparent;
+  transform:translateY(-50%);
+  overflow:visible;
+}
+
+.dot-nav .dot-link{
+  position:relative;
+  display:block;
+  width:clamp(12px,.9vw,16px);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:#fff;
+  border:1.4px solid #111;
+  transform:none;
+  transition:transform .18s ease,box-shadow .18s ease;
+  overflow:visible;
+}
+
+.dot-nav .dot-link.is-active{
+  background:#111;
+  border-color:#111;
+}
+
+.dot-nav .dot-link:hover,
+.dot-nav .dot-link:focus-visible{
+  transform:scale(1.18);
+  box-shadow:0 0 0 4px rgba(0,0,0,.06);
+}
+
+.dot-nav .dot-link::after{
+  content:attr(data-label);
+  position:absolute;
+  left:calc(100% + 14px);
+  top:50%;
+  transform:translateY(-50%) translateX(-6px);
+  padding:5px 8px;
+  color:#111;
+
+  font-family:var(--heading-font);
+  font-size:clamp(11px,.85vw,14px);
+  font-weight:300;
+  letter-spacing:.04em;
+  white-space:nowrap;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .16s ease,transform .16s ease,visibility .16s ease;
+}
+
+.dot-nav .dot-link:hover::after,
+.dot-nav .dot-link:focus-visible::after{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(-50%) translateX(0);
+}
+
+/* COLLAGE */
+.collage-viewport{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  cursor:grab;
+  user-select:none;
+  touch-action:none;
+  background:#fff;
+}
+.collage-viewport.is-dragging{cursor:grabbing}
+.collage-world{
+  position:absolute;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  overflow:visible;
+  pointer-events:none;
+}
+.collage-photo{
+  position:absolute;
+  left:0;
+  top:0;
+  padding:0;
+  border:0;
+  background:#ececec;
+  overflow:hidden;
+  pointer-events:auto;
+  cursor:pointer;
+  box-shadow:none;
+  will-change:transform;
+}
+.collage-photo img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  pointer-events:none;
+}
+.tile-fallback{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-content:center;
+  gap:4px;
+  padding:12px;
+  border:1px solid #111;
+  background:#efefec;
+  color:#111;
+  text-align:center;
+  font-size:10px;
+}
+.tile-fallback strong{font-family:var(--heading-font);font-size:14px}
+.tile-fallback small{color:#777}
+
+/* FILTER + STATUS */
+.filter-button{
+  position:fixed;
+  z-index:95;
+  top:6.5vh;
+  right:4.5vw;
+  padding:10px 14px;
+  border:0;
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  font-family: var(--heading-font);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor:pointer;
+}
+.status {
+  position: fixed;
+  z-index: 90;
+
+  left: 100px;
+  right: auto;
+  bottom: 55px;
+  transform: translateX(-50%);
+
+  width: 180px;
+  padding: 9px 0;
+
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  text-align: center;
+  white-space: normal;
+
+  font-family: var(--heading-font);
+  font-size: 12px;
+  line-height: 1.4;
+
+  pointer-events: none;
+}
+.drag-hint{
+  position:fixed;
+  z-index:85;
+  left:100px;
+  bottom:24px;
+  transform:translateX(-50%);
+  width:180px;
+  padding:7px 10px;
+  background:transparent;
+  text-align:center;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  pointer-events:none;
+}
+
+/* FILTER DRAWER */
+.filter-drawer{
+  position:fixed;
+  z-index:120;
+  top:0;
+  right:0;
+  width:min(430px,36vw);
+  min-width:340px;
+  height:100vh;
+  padding:38px 28px 30px;
+  background:#050505;
+  color:#fff;
+  transform:translateX(102%);
+  transition:transform .42s cubic-bezier(.2,.75,.2,1);
+  box-shadow:-18px 0 40px rgba(0,0,0,.13);
+}
+.filter-drawer.is-open{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.35)}
+.drawer-kicker,.filter-field span,.modal-kicker,.detail-list dt{margin:0;font-family:var(--heading-font);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.filter-count{margin:8px 0 0;color:rgba(255,255,255,.65);font-size:12px}
+.drawer-actions{display:flex;align-items:center;gap:16px}
+.reset-button,.close-button,.modal-close{padding:0;border:0;background:transparent;cursor:pointer}
+.reset-button{color:rgba(255,255,255,.7);font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.close-button{color:#fff;font-size:31px;line-height:.8}
+.filter-list{display:grid}
+.filter-field{display:grid;gap:10px;padding:21px 0 12px;border-bottom:1px solid rgba(255,255,255,.25)}
+.filter-field span{color:rgba(255,255,255,.58)}
+.filter-field select{width:100%;padding:0 26px 0 0;border:0;outline:0;background:#050505;color:#fff;font-family:var(--body-font);font-size:15px;cursor:pointer}
+
+/* DETAIL MODAL */
+.modal-backdrop{
+  position:fixed;
+  z-index:200;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:5vh 6vw;
+  background:rgba(0,0,0,.80);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.modal-backdrop[hidden]{display:none}
+.photo-modal{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);
+  width:min(1180px,88vw);
+  height:min(76vh,780px);
+  background:#050505;
+  color:#fff;
+  box-shadow:0 24px 90px rgba(0,0,0,.45);
+}
+.modal-image-wrap{
+  display:grid;
+  place-items:center;
+  min-width:0;
+  min-height:0;
+  padding:22px;
+  background:#070707;
+  transition:background-color .35s cubic-bezier(.22,1,.36,1);
+  border-right:1px solid rgba(255,255,255,.18);
+}
+.modal-image-wrap img{max-width:100%;max-height:100%;object-fit:contain}
+.image-fallback{width:100%;height:100%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.6);text-align:center;padding:20px}
+.modal-info{position:relative;padding:30px 34px 28px;overflow:auto;background:#050505;color:#fff}
+.modal-close{position:absolute;top:20px;right:24px;color:#fff;font-size:40px;line-height:1}
+.modal-kicker{color:rgba(255,255,255,.52)}
+.modal-info h1{margin:18px 0 34px;font-family:var(--title-font);font-size:clamp(48px,5.8vw,82px);line-height:.9;font-weight:400;letter-spacing:-.035em;color:#fff}
+.detail-list{margin:0}
+.detail-list>div{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.2)}
+.detail-list dt{color:rgba(255,255,255,.52)}
+.detail-list dd{margin:0;font-size:14px;color:#fff}
+
+@media(max-width:780px){
+  .filter-drawer{width:min(92vw,430px);min-width:0}
+  .photo-modal{grid-template-columns:1fr;grid-template-rows:48% 52%;width:90vw;height:88vh}
+}
+
+
+/* ==========================================================
+   PHOTOS V10
+   ========================================================== */
+
+/* Absolutely no gaps or outlines between collage cells. */
+.collage-photo {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.collage-photo img {
+  display: block;
+}
+
+/*
+  The navigation white area sits ABOVE the collage instead of forcing
+  cards to wrap at its boundary. Photos therefore slide underneath it
+  smoothly when dragged left.
+*/
+/* Keep the dots readable while photos continue beneath them. */
+.dot-nav {
+  z-index: 100 !important;
+}
+
+/* Keep click-detail interaction above the archive when opened. */
+.modal-backdrop {
+  z-index: 300 !important;
+}
+
+
+/* ==========================================================
+   PHOTOS V11 — reliable photo click interaction
+   ========================================================== */
+
+.collage-photo {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Make sure the photo itself never intercepts pointer events away from its button. */
+.collage-photo img,
+.tile-fallback {
+  pointer-events: none !important;
+}
+
+/* Preserve the detail overlay above every collage and navigation layer. */
+.modal-backdrop {
+  z-index: 500 !important;
+}
+
+.photo-modal {
+  z-index: 501 !important;
+}
+
+
+/* ==========================================================
+   PHOTOS V12 — mouse click + full-image detail fixes
+   ========================================================== */
+
+/* The viewport stays draggable, but actual photo cards visibly read as clickable. */
+.collage-photo {
+  cursor: pointer !important;
+}
+
+.collage-photo:hover {
+  cursor: pointer !important;
+}
+
+/*
+  Keep the entire selected photograph visible regardless of portrait/landscape
+  orientation. The image is fitted INSIDE the available left panel rather than
+  sized by its intrinsic dimensions.
+*/
+.modal-image-wrap {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.modal-image-wrap img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+/* Slightly more breathing room so tall photos remain fully visible. */
+.photo-modal {
+  height: min(72vh, 720px) !important;
+}
+
+
+/* ==========================================================
+   PHOTOS V13 — reliable mouse click + cleaner detail modal
+   ========================================================== */
+
+/* Photo cards are clickable; the image itself never steals pointer events. */
+.collage-photo {
+  cursor: pointer !important;
+}
+
+.collage-photo img,
+.collage-photo .tile-fallback {
+  pointer-events: none !important;
+}
+
+/* Fix the mysterious empty box under the selected photo:
+   the hidden fallback must truly disappear. */
+.image-fallback[hidden],
+#detail-image-fallback[hidden] {
+  display: none !important;
+}
+
+/* Make the selected photo fully visible without cropping. */
+.photo-modal {
+  width: min(1220px, 90vw) !important;
+  height: min(82vh, 820px) !important;
+  grid-template-columns: minmax(0, 1.4fr) minmax(350px, .6fr) !important;
+}
+
+.modal-image-wrap {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 18px !important;
+}
+
+.modal-image-wrap img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+/* Fit all metadata without a scrollbar. */
+.modal-info {
+  overflow: hidden !important;
+  padding: 24px 30px 22px !important;
+}
+
+.modal-info h1 {
+  margin: 12px 0 24px !important;
+  font-size: clamp(46px, 5vw, 72px) !important;
+}
+
+.modal-kicker,
+.detail-list dt {
+  font-size: 10px !important;
+}
+
+.detail-list > div {
+  grid-template-columns: 118px 1fr !important;
+  gap: 14px !important;
+  padding: 9px 0 !important;
+}
+
+.detail-list dd {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.modal-close {
+  top: 14px !important;
+  right: 18px !important;
+  font-size: 34px !important;
+}

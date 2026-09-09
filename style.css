@@ -1,0 +1,453 @@
+:root{
+  --bg:#000;
+  --fg:#f5f5f2;
+
+  --title-font:"fenway-banner","Fenway Banner",Georgia,serif;
+  --heading-font:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body-font:"Inter",Arial,sans-serif;
+
+  --rainbow:linear-gradient(
+    90deg,
+    #ff3b30 0%,
+    #ff9500 16%,
+    #ffd60a 32%,
+    #34c759 48%,
+    #32ade6 64%,
+    #5856d6 80%,
+    #af52de 100%
+  );
+}
+
+*{box-sizing:border-box}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--fg);
+}
+
+body{
+  overflow:hidden;
+  font-family:var(--body-font);
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.landing{
+  position:relative;
+  width:100%;
+  height:100vh;
+  min-height:620px;
+  overflow:hidden;
+  background:#000;
+}
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+
+.hero{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+}
+
+.hero-copy{
+  width:min(82vw,1280px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  transform:translateY(-1vh);
+}
+
+/* "Personal" removed */
+.eyebrow{
+  margin:0 0 clamp(18px,2.3vh,28px);
+  font-family:var(--body-font);
+  font-size:clamp(15px,1.35vw,23px);
+  font-weight:300;
+  letter-spacing:-.01em;
+}
+
+/* Entire copy glows in together first */
+.glow-group{
+  opacity:0;
+  filter:blur(11px);
+  text-shadow:0 0 30px rgba(255,255,255,.25);
+  animation:glowUp 1.35s cubic-bezier(.22,.75,.18,1) forwards .25s;
+}
+
+@keyframes glowUp{
+  0%{
+    opacity:0;
+    filter:blur(12px);
+    text-shadow:0 0 35px rgba(255,255,255,.34);
+  }
+
+  55%{
+    opacity:.8;
+    filter:blur(2px);
+    text-shadow:0 0 16px rgba(255,255,255,.18);
+  }
+
+  100%{
+    opacity:1;
+    filter:blur(0);
+    text-shadow:none;
+  }
+}
+
+/* ==========================================================
+   MOVING TITLE
+   ========================================================== */
+
+.moving-title{
+  margin:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-family:var(--title-font);
+  font-size:clamp(80px,12vw,200px);
+  line-height:.78;
+  font-weight:400;
+  letter-spacing:0.1em;
+
+  white-space:nowrap;
+  color:var(--fg);
+}
+
+/*
+  The word first appears with the parent glow animation.
+  After that, each letter moves with a slight delay so the motion
+  travels from left to right like a restrained wave.
+*/
+.moving-title span{
+  display:inline-block;
+  animation:letterWave 4.6s ease-in-out infinite;
+}
+
+.moving-title span:nth-child(1){animation-delay:1.65s}
+.moving-title span:nth-child(2){animation-delay:1.84s}
+.moving-title span:nth-child(3){animation-delay:2.03s}
+.moving-title span:nth-child(4){animation-delay:2.22s}
+.moving-title span:nth-child(5){animation-delay:2.41s}
+.moving-title span:nth-child(6){animation-delay:2.60s}
+
+@keyframes letterWave{
+  0%,100%{
+    transform:translateY(0);
+  }
+
+  25%{
+    transform:translateY(-9px);
+  }
+
+  50%{
+    transform:translateY(0);
+  }
+
+  75%{
+    transform:translateY(9px);
+  }
+}
+
+/* Lighter + more open subtitle */
+.subtitle{
+  margin:clamp(34px,4.5vh,52px) 0 0;
+
+  font-family:var(--heading-font);
+  font-size:clamp(17px,1.85vw,30px);
+  line-height:1.2;
+
+  font-weight:300;
+  letter-spacing:.045em;
+}
+
+/* ==========================================================
+   ORIGINAL RAINBOW FRAME ANIMATION
+   ========================================================== */
+
+.frame{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
+
+.line{
+  position:absolute;
+  overflow:hidden;
+}
+
+/* Rainbow itself continues flowing after each line has appeared */
+.line::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:var(--rainbow);
+  background-size:180% 100%;
+
+  animation:rainbowFlow 6s linear infinite;
+}
+
+.line-top,
+.line-bottom{
+  height:2px;
+}
+
+.line-right,
+.line-left{
+  width:2px;
+}
+
+/*
+  Sequence copied from the original landing:
+  top → right → bottom → left.
+  Top/right/bottom continue subtly collapsing and redrawing afterward.
+*/
+.line-top{
+  left:8.8vw;
+  right:8.8vw;
+  top:11.55vh;
+
+  transform-origin:left center;
+  transform:scaleX(0);
+
+  animation:
+    drawX .85s cubic-bezier(.3,.75,.15,1) forwards 1.65s,
+    redrawX 4.3s ease-in-out infinite 4.15s;
+}
+
+.line-right{
+  top:15vh;
+  bottom:18.6vh;
+  right:4.8vw;
+
+  transform-origin:center top;
+  transform:scaleY(0);
+
+  animation:
+    drawY .75s cubic-bezier(.3,.75,.15,1) forwards 2.28s,
+    redrawY 4.5s ease-in-out infinite 4.75s;
+}
+
+.line-bottom{
+  left:9.3vw;
+  right:8.4vw;
+  bottom:11.8vh;
+
+  transform-origin:right center;
+  transform:scaleX(0);
+
+  animation:
+    drawX .85s cubic-bezier(.3,.75,.15,1) forwards 2.9s,
+    redrawX 4.7s ease-in-out infinite 5.2s;
+}
+
+.line-left{
+  top:19.4vh;
+  bottom:18.7vh;
+  left:4.8vw;
+
+  transform-origin:center bottom;
+  transform:scaleY(0);
+
+  animation:
+    drawY .85s cubic-bezier(.3,.75,.15,1) forwards 3.5s;
+}
+
+@keyframes drawX{
+  to{transform:scaleX(1)}
+}
+
+@keyframes drawY{
+  to{transform:scaleY(1)}
+}
+
+@keyframes redrawX{
+  0%,15%{
+    transform:scaleX(1);
+    opacity:1;
+  }
+
+  44%{
+    transform:scaleX(.025);
+    opacity:.24;
+  }
+
+  74%,100%{
+    transform:scaleX(1);
+    opacity:1;
+  }
+}
+
+@keyframes redrawY{
+  0%,15%{
+    transform:scaleY(1);
+    opacity:1;
+  }
+
+  44%{
+    transform:scaleY(.025);
+    opacity:.24;
+  }
+
+  74%,100%{
+    transform:scaleY(1);
+    opacity:1;
+  }
+}
+
+@keyframes rainbowFlow{
+  from{
+    background-position:0% 50%;
+  }
+
+  to{
+    background-position:180% 50%;
+  }
+}
+
+/* ==========================================================
+   DOT NAVIGATION
+   ========================================================== */
+
+.dot-nav{
+  position:absolute;
+  z-index:6;
+
+  left:4.8vw;
+  top:50%;
+
+  display:grid;
+  gap:clamp(30px,4vh,40px);
+
+  transform: translateY(-50%);
+
+  opacity:0;
+  animation:navReveal .55s ease forwards 4.15s;
+}
+
+@keyframes navReveal{
+  to{opacity:1}
+}
+
+.dot-link{
+  position:relative;
+
+  width:clamp(12px,0.9vw,16px);
+  aspect-ratio:1;
+
+  border-radius:50%;
+  background:var(--fg);
+
+  transform:translateX(-50%);
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+.dot-link:hover,
+.dot-link:focus-visible{
+  transform:translateX(-50%) scale(1.18);
+  box-shadow:0 0 16px rgba(255,255,255,.28);
+}
+
+.dot-link::after{
+  content:attr(data-label);
+
+  position:absolute;
+  left:calc(100% + 14px);
+  top:50%;
+
+  transform:translateY(-50%) translateX(-6px);
+
+  padding:5px 8px;
+
+  color:var(--fg);
+  background:rgba(0,0,0,.78);
+
+  font-family:var(--heading-font);
+  font-size:clamp(11px,0.85vw,14px);
+  font-weight:300;
+  letter-spacing:.04em;
+  white-space:nowrap;
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:
+    opacity .16s ease,
+    transform .16s ease;
+}
+
+.dot-link:hover::after,
+.dot-link:focus-visible::after{
+  opacity:1;
+  transform:translateY(-50%) translateX(0);
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media(max-width:760px){
+  .hero-copy{
+    width:76vw;
+  }
+
+  .moving-title{
+    font-size:clamp(80px,21vw,150px);
+  }
+
+  .subtitle{
+    font-size:clamp(15px,4vw,22px);
+    letter-spacing:.03em;
+  }
+
+  .dot-nav{
+    gap:30px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .glow-group,
+  .moving-title span,
+  .line-top,
+  .line-right,
+  .line-bottom,
+  .line-left,
+  .line::before,
+  .dot-nav{
+    animation:none!important;
+  }
+
+  .glow-group,
+  .dot-nav{
+    opacity:1!important;
+    filter:none!important;
+  }
+
+  .line-top,
+  .line-bottom{
+    transform:scaleX(1)!important;
+  }
+
+  .line-right,
+  .line-left{
+    transform:scaleY(1)!important;
+  }
+}

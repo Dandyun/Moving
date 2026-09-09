@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MOVE — Photos</title>
+
+  <link rel="stylesheet" href="https://use.typekit.net/rqf0eoo.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="photos.css" />
+</head>
+<body>
+  <main class="photos-page">
+
+    <nav class="dot-nav" aria-label="Primary navigation">
+      <a class="dot-link" href="about.html" data-label="About" aria-label="About"></a>
+      <a class="dot-link is-active" href="photos.html" data-label="Photos" aria-label="Photos" aria-current="page"></a>
+      <a class="dot-link" href="emotions.html" data-label="Emotions" aria-label="Emotions"></a>
+      <a class="dot-link" href="move.html" data-label="Move" aria-label="Move"></a>
+    </nav>
+
+    <button id="filter-button" class="filter-button" type="button" aria-expanded="false" aria-controls="filter-drawer">
+      Filter
+    </button>
+
+    <section id="collage-viewport" class="collage-viewport" aria-label="Draggable infinite photo archive">
+      <div id="collage-world" class="collage-world"></div>
+      <div class="drag-hint" aria-hidden="true">Drag to explore</div>
+    </section>
+
+    <aside id="filter-drawer" class="filter-drawer" aria-hidden="true">
+      <div class="drawer-head">
+        <div>
+          <p class="drawer-kicker">FILTER ARCHIVE</p>
+          <p id="filter-count" class="filter-count">0 photographs</p>
+        </div>
+        <div class="drawer-actions">
+          <button id="reset-filters" class="reset-button" type="button">Reset all</button>
+          <button id="close-filter" class="close-button" type="button" aria-label="Close filters">×</button>
+        </div>
+      </div>
+
+      <div class="filter-list">
+        <label class="filter-field">
+          <span>Country</span>
+          <select id="country-filter"><option value="all">All countries</option></select>
+        </label>
+
+        <label class="filter-field">
+          <span>City</span>
+          <select id="city-filter"><option value="all">All cities</option></select>
+        </label>
+
+        <label class="filter-field">
+          <span>Place Type</span>
+          <select id="place-filter"><option value="all">All place types</option></select>
+        </label>
+
+        <label class="filter-field">
+          <span>With Group</span>
+          <select id="group-filter"><option value="all">All groups</option></select>
+        </label>
+
+        <label class="filter-field">
+          <span>Subject Type</span>
+          <select id="subject-filter"><option value="all">All subjects</option></select>
+        </label>
+
+        <label class="filter-field">
+          <span>People Visible</span>
+          <select id="people-filter"><option value="all">All people</option></select>
+        </label>
+      </div>
+    </aside>
+
+    <div id="modal-backdrop" class="modal-backdrop" hidden>
+      <article class="photo-modal" role="dialog" aria-modal="true" aria-labelledby="detail-photo-id">
+        <div class="modal-image-wrap">
+          <img id="detail-image" alt="" />
+          <div id="detail-image-fallback" class="image-fallback" hidden></div>
+        </div>
+
+        <div class="modal-info">
+          <button id="close-modal" class="modal-close" type="button" aria-label="Close photograph">×</button>
+          <p class="modal-kicker">SELECTED PHOTOGRAPH</p>
+          <h1 id="detail-photo-id">—</h1>
+
+          <dl class="detail-list">
+            <div><dt>Date & Time</dt><dd id="detail-date">—</dd></div>
+            <div><dt>Location</dt><dd id="detail-location">—</dd></div>
+            <div><dt>Place Type</dt><dd id="detail-place">—</dd></div>
+            <div><dt>With Group</dt><dd id="detail-group">—</dd></div>
+            <div><dt>Subject Type</dt><dd id="detail-subject">—</dd></div>
+            <div><dt>People Visible</dt><dd id="detail-people">—</dd></div>
+            <div><dt>Emotion</dt><dd id="detail-emotion">—</dd></div>
+            <div><dt>Emotion Score</dt><dd id="detail-score">—</dd></div>
+          </dl>
+        </div>
+      </article>
+    </div>
+
+    <div id="status" class="status" aria-live="polite"></div>
+  </main>
+
+  <script src="photos-data.js"></script>
+  <script src="photos.js"></script>
+</body>
+</html>

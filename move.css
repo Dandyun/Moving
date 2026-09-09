@@ -1,0 +1,498 @@
+:root{
+  --bg:#f5f3ee;
+  --ink:#111;
+  --muted:#77736c;
+  --line:#c7c2b8;
+
+  --joy:#f6c744;
+  --trust:#6dbb4b;
+  --fear:#1c9d50;
+  --surprise:#39b7df;
+  --sadness:#2d5daa;
+  --disgust:#9b5aa5;
+  --anger:#ed2f32;
+  --anticipation:#f36f3f;
+
+  --title-font:"fenway-banner","Fenway Banner",Georgia,serif;
+  --heading-font:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body-font:"Inter",Arial,sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink)}
+body{overflow:hidden;font-family:var(--body-font)}
+button{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+.move-page{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--bg)}
+
+/* NAV */
+.dot-nav{
+  position:fixed;z-index:100;left:5.5vw;top:36vh;display:grid;gap:clamp(34px,5.5vh,54px)
+}
+.dot-link{
+  position:relative;display:block;width:16px;height:16px;border-radius:50%;
+  background:#fff;border:1.6px solid #111;transform:translateX(-50%);
+  transition:transform .16s ease,width .16s ease,height .16s ease
+}
+.dot-link.is-active{width:26px;height:26px;background:#111;border-color:#111}
+.dot-link:hover{transform:translateX(-50%) scale(1.12)}
+.dot-link::after{
+  content:attr(data-label);position:absolute;left:calc(100% + 14px);top:50%;
+  transform:translateY(-50%) translateX(-6px);padding:6px 9px;background:rgba(245,243,238,.94);
+  color:#111;font-family:var(--heading-font);font-size:14px;font-weight:600;white-space:nowrap;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .16s ease,transform .16s ease
+}
+.dot-link:hover::after,.dot-link:focus-visible::after{
+  opacity:1;visibility:visible;transform:translateY(-50%) translateX(0)
+}
+
+/* MAP */
+.map-view{position:absolute;inset:0;padding:5vh 4.5vw 4vh 11vw}
+.map-header{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.36fr);gap:40px;align-items:end
+}
+.section-number{margin:0 0 4px;color:var(--muted);font-size:10px;letter-spacing:.12em}
+.map-header h1{
+  margin:0;font-family:var(--heading-font);font-size:clamp(52px,5.5vw,86px);
+  line-height:.92;font-weight:400;letter-spacing:-.06em
+}
+.map-description{max-width:480px;margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.map-legend{
+  display:flex;gap:24px;align-items:center;margin-top:20px;padding-bottom:16px;
+  border-bottom:1px solid var(--ink);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.07em
+}
+.map-legend span{display:flex;align-items:center;gap:7px}
+.legend-dot{display:inline-block;border-radius:50%}
+.country-dot{width:10px;height:10px;background:#111}
+.city-dot{width:8px;height:8px;background:#8f8c87}
+
+.map-stage-wrap{
+  position:absolute;left:11vw;right:4.5vw;top:25vh;bottom:8vh;
+  overflow:hidden;cursor:grab;touch-action:none
+}
+.map-stage-wrap.dragging{cursor:grabbing}
+.map-stage{position:absolute;inset:0;overflow:visible}
+#movement-map{display:block;height:100%;min-width:2100px;overflow:visible}
+
+.map-link{stroke:#a8a49c;stroke-width:1.2;fill:none}
+.country-node circle{fill:#444}
+.city-node circle{fill:#8c8a85}
+.node-group{cursor:pointer}
+.node-group:hover circle{stroke:#111;stroke-width:3}
+.node-label{fill:#111;font-family:var(--heading-font);font-size:12px;font-weight:700;text-anchor:middle}
+.node-count{fill:#77736c;font-family:var(--body-font);font-size:9px;text-anchor:middle}
+.map-scroll-note{
+  position:absolute;right:4.5vw;bottom:3.7vh;margin:0;color:var(--muted);
+  font-size:9px;letter-spacing:.1em
+}
+
+/* DETAIL */
+.location-view{position:absolute;inset:0;background:var(--bg);z-index:30}
+.location-view[hidden]{display:none}
+.back-button{
+  position:absolute;z-index:80;left:4.5vw;top:5vh;border:0;background:transparent;
+  font-family:var(--heading-font);font-size:13px;font-weight:700;letter-spacing:.06em;cursor:pointer
+}
+.location-canvas{position:absolute;inset:0;overflow:hidden}
+
+.pie-center{
+  position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);
+  width:min(29vw,470px);aspect-ratio:1;z-index:20
+}
+#emotion-pie{display:block;width:100%;height:100%;filter:drop-shadow(0 8px 18px rgba(0,0,0,.09))}
+.pie-slice{stroke:var(--bg);stroke-width:3}
+.pie-label{
+  font-family:var(--heading-font);font-size:10px;font-weight:700;fill:#111;text-anchor:middle;pointer-events:none
+}
+
+.photo-orbit{position:absolute;inset:0;z-index:10;pointer-events:none}
+.orbit-photo{
+  position:absolute;display:block;object-fit:cover;background:#fff;border:1px solid rgba(17,17,17,.52);
+  box-shadow:0 8px 24px rgba(0,0,0,.05)
+}
+
+.location-card{
+  position:absolute;left:50%;top:78%;transform:translateX(-50%);
+  width:min(430px,34vw);padding:20px 22px;background:rgba(245,243,238,.94);
+  border:1px solid #777;z-index:40
+}
+.location-type{
+  margin:0 0 5px;font-family:var(--heading-font);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--muted)
+}
+.location-card h2{
+  margin:0 0 7px;font-family:var(--title-font);font-size:46px;line-height:.92;font-weight:400
+}
+.location-count{margin:0;font-family:var(--heading-font);font-size:17px;font-weight:600}
+.location-sub{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+
+.next-location{
+  position:absolute;right:3.5vw;top:50%;width:110px;height:180px;transform:translateY(-50%);
+  border:0;background:transparent;cursor:pointer;z-index:60
+}
+.arrow-line{position:absolute;right:16px;top:50%;width:72px;height:5px;background:#111;transform:translateY(-50%)}
+.arrow-head{
+  position:absolute;right:10px;top:50%;width:58px;height:58px;border-top:5px solid #111;border-right:5px solid #111;
+  transform:translateY(-50%) rotate(45deg)
+}
+.next-label{
+  position:absolute;right:35px;top:50%;transform:translateY(-50%);
+  font-family:var(--heading-font);font-size:13px;font-weight:700;white-space:nowrap
+}
+.previous-location{
+  position:absolute;left:3.5vw;top:50%;transform:translateY(-50%);
+  border:0;background:rgba(245,243,238,.75);padding:8px;font-size:32px;cursor:pointer;z-index:60
+}
+
+/* TOOLTIP */
+.tooltip{
+  position:fixed;z-index:500;padding:8px 10px;background:#111;color:#fff;
+  font-size:11px;pointer-events:none;white-space:nowrap
+}
+[hidden]{display:none!important}
+
+@media(max-width:900px){
+  .map-view{padding-left:14vw}
+  .map-stage-wrap{left:14vw}
+  .location-card{width:54vw}
+}
+
+
+/* ==========================================================
+   MOVE PHYSICAL V2
+   white background + MOVE font system + hover pie preview
+   ========================================================== */
+
+:root{
+  --bg:#fff !important;
+  --ink:#111 !important;
+  --muted:#77736c !important;
+  --line:#d4d0c8 !important;
+
+  --title-font:"fenway-banner","Fenway Banner",Georgia,serif !important;
+  --heading-font:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  --body-font:"Inter",Arial,sans-serif !important;
+}
+
+html,
+body,
+.move-page,
+.map-view,
+.location-view,
+.location-canvas{
+  background:#fff !important;
+}
+
+body,
+button{
+  font-family:"Inter",Arial,sans-serif !important;
+}
+
+.map-header h1,
+.location-card h2{
+  font-family:"fenway-banner","Fenway Banner",Georgia,serif !important;
+  font-weight:400 !important;
+}
+
+.section-number,
+.map-legend,
+.node-label,
+.location-type,
+.location-count,
+.next-label,
+.back-button,
+.dot-link::after{
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+}
+
+.map-description,
+.node-count,
+.location-sub{
+  font-family:"Inter",Arial,sans-serif !important;
+}
+
+/* Keep photo/pie card pure white */
+.location-card{
+  background:rgba(255,255,255,.96) !important;
+}
+
+/* hover pie preview */
+.hover-pie{
+  position:fixed;
+  z-index:800;
+  width:180px;
+  min-height:214px;
+  padding:10px;
+  background:#fff;
+  border:1px solid #111;
+  box-shadow:0 14px 36px rgba(0,0,0,.12);
+  pointer-events:none;
+}
+
+.hover-pie[hidden]{
+  display:none !important;
+}
+
+.hover-pie svg{
+  display:block;
+  width:160px;
+  height:160px;
+  margin:0 auto;
+}
+
+.hover-pie-title{
+  margin:6px 2px 0;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
+  font-size:12px;
+  font-weight:700;
+}
+
+.hover-pie-sub{
+  margin:2px 2px 0;
+  color:#77736c;
+  font-family:"Inter",Arial,sans-serif;
+  font-size:10px;
+}
+
+/* Make nodes clearly clickable */
+.node-group{
+  cursor:pointer !important;
+}
+
+.node-group circle{
+  pointer-events:none;
+}
+
+.node-group text{
+  pointer-events:none;
+}
+
+
+/* ==========================================================
+   MOVE PHYSICAL V3 — interaction fix + larger map
+   ========================================================== */
+
+/* Give the map much more visual space. */
+.map-view{
+  padding-top:3.5vh !important;
+  padding-bottom:2.5vh !important;
+}
+
+.map-header h1{
+  font-size:clamp(62px,6.4vw,104px) !important;
+}
+
+.map-legend{
+  margin-top:14px !important;
+  padding-bottom:12px !important;
+}
+
+.map-stage-wrap{
+  left:10vw !important;
+  right:2.8vw !important;
+  top:22vh !important;
+  bottom:3.8vh !important;
+}
+
+#movement-map{
+  min-width:2500px !important;
+  height:100% !important;
+}
+
+/*
+  IMPORTANT:
+  V2 accidentally disabled pointer events on the SVG children.
+  Since <g> itself has no painted area, there was literally nothing
+  for the mouse to hit. Re-enable the circles/text so events bubble
+  to .node-group.
+*/
+.node-group{
+  cursor:pointer !important;
+}
+
+.node-group circle,
+.node-group text{
+  pointer-events:auto !important;
+}
+
+.node-group:hover circle{
+  stroke:#111 !important;
+  stroke-width:4px !important;
+}
+
+/* Make labels more legible at the larger scale. */
+.node-label{
+  font-size:14px !important;
+}
+
+.node-count{
+  font-size:10px !important;
+}
+
+/* Hover pie preview: larger and more obvious */
+.hover-pie{
+  width:220px !important;
+  min-height:252px !important;
+  padding:12px !important;
+  border:1.5px solid #111 !important;
+  background:#fff !important;
+}
+
+.hover-pie svg{
+  width:194px !important;
+  height:194px !important;
+}
+
+.hover-pie-title{
+  font-size:14px !important;
+}
+
+.hover-pie-sub{
+  font-size:11px !important;
+}
+
+
+/* ==========================================================
+   MOVE PHYSICAL V4
+   title fit / in-node hover pie / larger detail / draggable photos
+   ========================================================== */
+
+/* 1. Keep title on one line and stop it from pushing the map downward. */
+.map-header{
+  grid-template-columns:minmax(0,1.25fr) minmax(300px,.38fr) !important;
+  gap:32px !important;
+  align-items:start !important;
+}
+
+.map-header h1{
+  font-family:"fenway-banner","Fenway Banner",Georgia,serif !important;
+  font-size:clamp(62px,5.4vw,88px) !important;
+  line-height:.86 !important;
+  letter-spacing:-.045em !important;
+  white-space:nowrap !important;
+}
+
+.map-description{
+  padding-top:10px !important;
+}
+
+.map-stage-wrap{
+  top:19.5vh !important;
+  bottom:3.5vh !important;
+}
+
+/* Map node hover pie lives inside the node circle */
+.node-pie-slice{
+  stroke:#fff;
+  stroke-width:1.5;
+  pointer-events:none;
+}
+
+/* Remove old floating hover box entirely */
+.hover-pie{
+  display:none !important;
+}
+
+/* 3–4. Larger detail pie and more room below */
+.pie-center{
+  left:50% !important;
+  top:41% !important;
+  width:min(36vw,590px) !important;
+}
+
+.pie-label{
+  font-size:12px !important;
+}
+
+.pie-percent{
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+  fill:#111 !important;
+  text-anchor:middle !important;
+  pointer-events:none !important;
+}
+
+/* Place info card centered directly below the pie */
+.location-card{
+  left:50% !important;
+  top:72% !important;
+  transform:translateX(-50%) !important;
+  width:min(470px,33vw) !important;
+  padding:16px 20px !important;
+  text-align:center !important;
+  background:rgba(255,255,255,.97) !important;
+}
+
+.location-type,
+.location-count,
+.location-sub{
+  text-align:center !important;
+}
+
+.location-card h2{
+  text-align:center !important;
+  font-size:50px !important;
+}
+
+.location-count{
+  font-size:16px !important;
+}
+
+/* More orbit photos, no borders; each can be dragged */
+.orbit-photo{
+  border:0 !important;
+  box-shadow:none !important;
+  cursor:grab !important;
+  pointer-events:auto !important;
+  user-select:none !important;
+  touch-action:none !important;
+}
+
+.orbit-photo.dragging{
+  cursor:grabbing !important;
+  z-index:60 !important;
+}
+
+/* 5–6. Right arrow only, just a ">" shape */
+.next-location{
+  right:2.2vw !important;
+  top:50% !important;
+  width:150px !important;
+  height:180px !important;
+}
+
+.arrow-line{
+  display:none !important;
+}
+
+.arrow-head{
+  right:18px !important;
+  width:64px !important;
+  height:64px !important;
+  border-top:6px solid #111 !important;
+  border-right:6px solid #111 !important;
+}
+
+.next-label{
+  right:62px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  font-size:18px !important;
+  font-weight:700 !important;
+  letter-spacing:.02em !important;
+
+  color:#fff !important;
+  -webkit-text-stroke:1.25px #111 !important;
+  paint-order:stroke fill !important;
+  text-shadow:
+    -1px -1px 0 #111,
+     1px -1px 0 #111,
+    -1px  1px 0 #111,
+     1px  1px 0 #111 !important;
+}
+
+.previous-location{
+  display:none !important;
+}

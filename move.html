@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MOVE — Physical Movement Map">
+  <title>MOVE — Physical Movement</title>
+
+  <link rel="stylesheet" href="https://use.typekit.net/rqf0eoo.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="move.css">
+  <script src="move-data.js" defer></script>
+  <script src="move.js" defer></script>
+</head>
+<body>
+  <main class="move-page">
+
+    <nav class="dot-nav" aria-label="Primary navigation">
+      <a class="dot-link" href="about.html" data-label="About" aria-label="About"></a>
+      <a class="dot-link" href="photos.html" data-label="Photos" aria-label="Photos"></a>
+      <a class="dot-link" href="emotions.html" data-label="Emotions" aria-label="Emotions"></a>
+      <a class="dot-link is-active" href="move.html" data-label="Move" aria-label="Move"></a>
+    </nav>
+
+    <!-- MAP VIEW -->
+    <section class="map-view" id="map-view">
+      <header class="map-header">
+        <div>
+          <p class="section-number">04</p>
+          <h1>Physical Movement Map</h1>
+        </div>
+
+        <p class="map-description">
+          Mapping my physical movement across countries and cities through a horizontally
+          scrollable hierarchy. Circle size represents the number of photographs.
+          Select a location to reveal its emotional composition and photographs.
+        </p>
+      </header>
+
+      <div class="map-legend">
+        <span><i class="legend-dot country-dot"></i> Country</span>
+        <span><i class="legend-dot city-dot"></i> City</span>
+        <span>Click → Emotion pie + photographs</span>
+        <span>Circle size → Photograph count</span>
+      </div>
+
+      <div class="map-stage-wrap">
+        <div class="map-stage" id="map-stage">
+          <svg id="movement-map" role="img" aria-label="Country and city hierarchy"></svg>
+        </div>
+      </div>
+
+      <p class="map-scroll-note">← DRAG / SCROLL HORIZONTALLY →</p>
+    </section>
+
+    <!-- LOCATION DETAIL VIEW -->
+    <section class="location-view" id="location-view" hidden>
+      <button class="back-button" id="back-to-map" type="button" aria-label="Back to physical movement map">← MAP</button>
+
+      <div class="location-canvas">
+        <div class="photo-orbit" id="photo-orbit" aria-hidden="true"></div>
+
+        <div class="pie-center">
+          <svg id="emotion-pie" role="img" aria-label="Emotion distribution pie chart"></svg>
+        </div>
+
+        <article class="location-card">
+          <p class="location-type" id="location-type">CITY</p>
+          <h2 id="location-name">New York</h2>
+          <p class="location-count"><span id="location-count">0</span> photographs</p>
+          <p class="location-sub" id="location-sub"></p>
+        </article>
+
+        <button class="next-location" id="next-location" type="button" aria-label="Show next location">
+          <span class="arrow-line"></span>
+          <span class="arrow-head"></span>
+          <span class="next-label" id="next-label">NEXT</span>
+        </button>
+</div>
+    </section>
+
+    <div class="tooltip" id="tooltip" hidden></div>
+    <div class="hover-pie" id="hover-pie" hidden>
+      <svg id="hover-pie-svg" viewBox="0 0 180 180" aria-hidden="true"></svg>
+      <p class="hover-pie-title" id="hover-pie-title"></p>
+      <p class="hover-pie-sub" id="hover-pie-sub"></p>
+    </div>
+  </main>
+</body>
+</html>
