@@ -3,106 +3,128 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MOVING — a personal photographic archive of movement, memory, and emotion, 2023–2026.">
   <title>MOVING — About</title>
 
+  <!-- Original font families and font providers. -->
   <link rel="stylesheet" href="https://use.typekit.net/rqf0eoo.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="about.css">
+  <script src="about.js" defer></script>
 </head>
 <body>
-  <main class="about-page">
+  <a class="skip-link" href="#inspiration">Skip to content</a>
 
-    <section class="horizontal-shell">
-      <div class="horizontal-track">
+  <!-- Same 200px boundary as Photos; its solid color follows the scroll. -->
+  <div class="nav-wall" aria-hidden="true"></div>
 
-       
+  <!-- These four dots still navigate between the four existing website pages. -->
+  <nav class="dot-nav" aria-label="Primary navigation">
+    <a class="dot-link is-active" href="about.html" data-label="About" aria-label="About" aria-current="page"></a>
+    <a class="dot-link" href="photos.html" data-label="Photos" aria-label="Photos"></a>
+    <a class="dot-link" href="emotions.html" data-label="Emotions" aria-label="Emotions"></a>
+    <a class="dot-link" href="move.html" data-label="Move" aria-label="Move"></a>
+  </nav>
 
-        <div class="intro-zone">
-          <nav class="dot-nav" aria-label="Primary navigation">
-            <a class="dot-link is-active" href="about.html" data-label="About" aria-label="About"></a>
-            <a class="dot-link" href="photos.html" data-label="Photos" aria-label="Photos"></a>
-            <a class="dot-link" href="emotions.html" data-label="Emotions" aria-label="Emotions"></a>
-            <a class="dot-link" href="move.html" data-label="Move" aria-label="Move"></a>
-          </nav>
+  <!-- The image stays fixed; only its inner rotor rotates. -->
+  <div class="wheel-viewport" aria-hidden="true">
+    <div class="wheel-stage">
+      <img class="timeline-wheel" src="wheel.png" width="2048" height="1868" alt="" decoding="async" fetchpriority="high">
+    </div>
+  </div>
 
-          <div class="move-title-wrap">
-            <a href="index.html" aria-label="Back to landing"><h1 class="move-title">MOVING</h1></a>
-          </div>
-
-          <div class="intro-copy statement">
-            <p class="section-kicker reveal-up">Inspiration</p>
-            <h2 class="reveal-up delay-1">What does movement mean to me?</h2>
-            <p class="reveal-up delay-2">
-              MOVING began with my emotional timeline, which revealed that my strongest
-              emotional shifts often occurred during moments of movement, while stability
-              brought calm. Using photographs as records of these transitions, this project
-              visualizes how changes in place, relationships, and experience shape my
-              emotions over time.
-            </p>
-          </div>
+  <main class="about-page" id="top">
+    <!-- SCREEN 1: title above / inspiration below. -->
+    <section class="screen intro-screen" id="inspiration" data-wheel-anchor aria-labelledby="inspiration-heading">
+      <div class="screen-inner intro-inner">
+        <div class="move-title-wrap">
+          <h1 class="move-title">
+            <a class="title-link" href="index.html" aria-label="MOVING — Back to landing">
+              <span class="title-letters" aria-hidden="true"><span class="title-letter">M</span><span class="title-letter">O</span><span class="title-letter">V</span><span class="title-letter">I</span><span class="title-letter">N</span><span class="title-letter">G</span></span>
+            </a>
+          </h1>
         </div>
 
-        <div class="content-block block-image">
-          <figure class="inspiration-image-wrap reveal-down">
-            <img src="inspiration.jpg" alt="My Chronology of Emotions visualization">
-          </figure>
+        <div class="statement intro-copy">
+          <p class="section-kicker reveal-text">01. Inspiration</p>
+          <h2 class="reveal-text delay-1" id="inspiration-heading">What does movement mean to me?</h2>
+          <p class="reveal-text delay-2">MOVING began with a simple observation. While organizing years of photographs, I noticed that my strongest emotional changes often occurred during periods of movement rather than moments of stability. Looking across the archive revealed not isolated memories, but an ongoing flow of places, relationships, and experiences. This project explores that continuous process of change through the photographs I have taken.</p>
         </div>
+      </div>
+    </section>
 
-        <div class="content-block block-project">
-          <div class="statement">
-            <p class="section-kicker reveal-up">About The Project</p>
-            <h2 class="reveal-up delay-1">Questions that shape the archive</h2>
-            <ol class="reveal-up delay-2">
-              <li>What is a photograph to me?</li>
-              <li>What does it mean to take a photograph?</li>
-              <li>How does movement shape my emotions over time?</li>
-            </ol>
-            <p class="reveal-up delay-3">
-              MOVING is a personal data visualization project that turns a photo archive into
-              a visual story of movement, experience, and emotion. It is both a record of my
-              life and an exploration of how data can reveal meaning in memory.
-            </p>
-          </div>
-        </div>
-
-        <div class="content-block block-diagram">
-          <figure class="project-diagram-wrap reveal-down">
-            <img src="project-diagram.png" alt="Photo connected to Time, Place, Emotion, People, and Subject">
-          </figure>
-        </div>
-
-        <div class="content-block block-data">
-          <div class="statement data-statement">
-            <p class="section-kicker reveal-up">About The Data</p>
-            <h2 class="reveal-up delay-1">Photographs are more than images.</h2>
-            <p class="reveal-up delay-2">
-              Each photograph in MOVING is treated as a record shaped by time, 
-              place, people, subjects, and emotions. By organizing these elements 
-              as data, the archive reveals patterns that may not be visible when looking 
-              at photographs individually. It allows me to trace where I moved, what I 
-              photographed, who I was with, and how these elements changed across different 
-              moments and places.
-            </p>
-            <h2 class="reveal-up delay-2">The data is personal, not objective.</h2>
-            <p class="reveal-up delay-3">
-              The emotions and meanings attached to each photograph are based on my own memory and 
-              interpretation rather than objective measurements. They reflect how I remember 
-              each moment now, which may change over time. In this way, MOVING does not attempt 
-              to measure my experiences precisely, but uses data as a way to explore how 
-              photographs, movement, emotion, and memory continuously shape one another.
-            </p>
-          </div>
+    <!-- Archive and Data use the same chapter gap as every other section. -->
+    <section class="screen archive-screen" id="archive" data-wheel-anchor aria-labelledby="archive-heading">
+      <div class="screen-inner archive-inner">
+        <div class="statement archive-copy">
+          <p class="section-kicker reveal-text">02. About the Archive</p>
+          <h2 class="reveal-text delay-1" id="archive-heading">A personal archive from 2023–2026</h2>
+          <p class="reveal-text delay-2">The archive in <strong>MOVING</strong> consists of photographs taken between <strong>August 2023 and August 2026</strong>. This three-year period marks the beginning of my adult life, when I turned eighteen and began moving frequently between South Korea and New York as an international student.</p>
+          <p class="reveal-text delay-3">Rather than documenting a single place, these photographs capture a period of constant transition. During these years, my environments, relationships, routines, and perspectives continuously changed. Looking back, I realized that this archive records not only where I traveled, but also how my identity gradually formed through movement.</p>
         </div>
 
       </div>
     </section>
 
-    <div class="scroll-hint" aria-hidden="true">SCROLL →</div>
+    <section class="screen data-screen" id="data" data-wheel-anchor aria-labelledby="data-heading">
+      <div class="screen-inner data-inner">
+        <div class="data-row">
+          <figure class="project-diagram-wrap reveal-image">
+            <img src="project-diagram.png" width="1524" height="1320" alt="A photograph connected to five data fields: time — when; place — where; emotion — how I felt; people — who I was with; subject — what I saw." decoding="async" loading="lazy">
+          </figure>
+          <div class="statement data-copy">
+            <p class="section-kicker reveal-text">03. About the Data</p>
+            <h2 class="reveal-text delay-1" id="data-heading">Every photograph becomes one record.</h2>
+            <p class="reveal-text delay-2">Each photograph in <strong>MOVING</strong> is treated as a single record within a larger archive. The photographs were taken between <strong>August 2023 and August 2026</strong>, documenting a period of continuous movement between South Korea and New York. Alongside metadata such as time and place, every image is annotated with people, subject matter, and emotion. Together, these layers allow photographs to be connected, filtered, and reorganized, revealing patterns that remain invisible when images are viewed individually.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Emotion system: larger artwork, with both image and caption shifted left. -->
+    <section class="screen emotion-screen" id="emotion-classification" data-wheel-anchor aria-labelledby="emotion-heading">
+      <div class="screen-inner emotion-inner">
+        <div class="statement emotion-copy">
+          <!-- Numbering follows the supplied text: 01, 02, 03, 05, 06. -->
+          <p class="section-kicker reveal-text">05. Emotion Classification</p>
+          <h2 class="reveal-text delay-1" id="emotion-heading">Color as emotional metadata</h2>
+          <p class="reveal-text delay-2">The emotional categories used throughout MOVING are based on <strong>Robert Plutchik's Wheel of Emotions</strong>. The wheel provides a consistent vocabulary for describing emotions while allowing photographs to be organized within a broader emotional structure.</p>
+          <p class="reveal-text delay-3">Rather than inventing new categories for every image, using Plutchik's framework makes emotional relationships easier to compare across different places, people, and moments.</p>
+        </div>
+
+        <figure class="emotion-figure">
+          <img class="reveal-image" src="emotion system.png" width="2048" height="2048" alt="Eight emotional categories arranged as colored petals: joy, trust, fear, surprise, sadness, disgust, anger, and anticipation." decoding="async" loading="lazy">
+          <figcaption class="reveal-text delay-1">
+            <span class="figure-title">Emotion System</span>
+            <span class="figure-subtitle">Inspired by Plutchik's Wheel of Emotions</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- The closing statement is centered on the full viewport. -->
+    <section class="screen relationships-screen" id="relationships" data-wheel-anchor aria-labelledby="relationships-heading">
+      <div class="screen-inner relationships-inner">
+        <div class="statement relationships-copy">
+          <p class="section-kicker reveal-text">06. Why Relationships Matter</p>
+          <h2 class="reveal-text delay-1" id="relationships-heading">Individual photographs record moments.</h2>
+          <p class="reveal-text delay-2">A single photograph captures only one moment. However, memory is rarely experienced as isolated images. Places connect to people, people connect to emotions, and one memory continuously leads to another.</p>
+          <p class="reveal-text delay-3">Rather than reducing photographs into numbers, data visualization becomes a way of revealing these invisible relationships. Through filtering, reorganizing, and connecting thousands of photographs, MOVING visualizes the movement of memory itself.</p>
+        </div>
+      </div>
+      <p class="closing-statement reveal-text">
+        <span>Photographs freeze moments.</span>
+        <span>Relationships between photographs reveal movement.</span>
+      </p>
+    </section>
   </main>
 
-  <script src="about.js"></script>
+  <a class="scroll-hint" href="#archive" aria-label="Scroll to the next section">
+    <svg width="26" height="48" viewBox="0 0 26 48" fill="none" aria-hidden="true">
+      <path d="M13 3V43M3 33L13 43L23 33" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
 </body>
 </html>
