@@ -29,8 +29,7 @@
     <section class="map-view" id="map-view">
       <header class="map-header">
         <div>
-          <p class="section-number">04</p>
-          <h1>Physical Movement Map</h1>
+<h1>Physical Movement Map</h1>
         </div>
 
         <p class="map-description">
@@ -60,27 +59,48 @@
     <section class="location-view" id="location-view" hidden>
       <button class="back-button" id="back-to-map" type="button" aria-label="Back to physical movement map">← MAP</button>
 
-      <div class="location-canvas">
-        <div class="photo-orbit" id="photo-orbit" aria-hidden="true"></div>
+      <div class="location-detail-layout">
+        <section class="location-left" aria-label="Location emotion summary">
+          <article class="location-card">
+            <p class="location-type" id="location-type">CITY</p>
+            <h2 id="location-name">New York</h2>
+            <p class="location-count"><span id="location-count">0</span> photographs</p>
+            <p class="location-sub" id="location-sub"></p>
+          </article>
 
-        <div class="pie-center">
-          <svg id="emotion-pie" role="img" aria-label="Emotion distribution pie chart"></svg>
-        </div>
+          <div class="detail-pie-wrap">
+            <svg id="emotion-pie" role="img" aria-label="Emotion distribution pie chart"></svg>
+          </div>
 
-        <article class="location-card">
-          <p class="location-type" id="location-type">CITY</p>
-          <h2 id="location-name">New York</h2>
-          <p class="location-count"><span id="location-count">0</span> photographs</p>
-          <p class="location-sub" id="location-sub"></p>
-        </article>
+          <div class="emotion-legend" id="emotion-legend" aria-label="Emotion color legend">
+            <div class="emotion-legend-items" id="emotion-legend-items"></div>
+          </div>
+        </section>
 
-        <button class="next-location" id="next-location" type="button" aria-label="Show next location">
-          <span class="arrow-line"></span>
-          <span class="arrow-head"></span>
-          <span class="next-label" id="next-label">NEXT</span>
-        </button>
-</div>
+        <section class="photo-grid-panel" aria-label="Photographs from selected location">
+          <div class="photo-grid" id="photo-grid"></div>
+        </section>
+      </div>
+
+      <button class="next-location" id="next-location" type="button" aria-label="Show next location">
+        <span class="arrow-head"></span>
+      </button>
     </section>
+
+
+    <aside class="photo-hover-preview" id="photo-hover-preview" hidden aria-hidden="true">
+      <div class="photo-hover-image-wrap">
+        <img id="photo-hover-image" alt="">
+      </div>
+      <div class="photo-hover-meta">
+        <p class="photo-hover-id" id="photo-hover-id">—</p>
+        <dl>
+          <div><dt>Date</dt><dd id="photo-hover-date">—</dd></div>
+          <div><dt>Emotion</dt><dd id="photo-hover-emotion">—</dd></div>
+          <div><dt>Emotion score</dt><dd id="photo-hover-score">—</dd></div>
+        </dl>
+      </div>
+    </aside>
 
     <div class="tooltip" id="tooltip" hidden></div>
     <div class="hover-pie" id="hover-pie" hidden>

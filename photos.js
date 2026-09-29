@@ -249,15 +249,19 @@ function rebuildCollage(){
   const display = rows.length>84 ? evenlySample(rows,84) : rows;
 
   display.forEach((row,index)=>{
-    const card=createPhotoCard(row);
     const col=index%COLS;
     const r=Math.floor(index/COLS);
 
     const wide = index%13===0;
     const tall = !wide && index%11===0;
 
+    // Keep three horizontal copies of every logical tile. The center copy
+    // plus its left/right mirrors makes the collage continuous even while
+    // a whole grid cycle is crossing a viewport edge.
+    const els=[-1,0,1].map(()=>createPhotoCard(row));
+
     state.cards.push({
-      el:card,
+      els,
       row,
       baseX:SAFE_LEFT + col*CELL_W,
       baseY:20 + r*CELL_H,
@@ -265,7 +269,7 @@ function rebuildCollage(){
       h:(tall?2:1)*CELL_H
     });
 
-    world.appendChild(card);
+    els.forEach(card=>world.appendChild(card));
   });
 
   renderCards();
@@ -284,21 +288,23 @@ function renderCards(){
   const worldH=Math.max(rowsNeeded*CELL_H, window.innerHeight + CELL_H*2);
 
   state.cards.forEach(item=>{
-    const rawX=item.baseX + state.panX;
-    let x=mod(rawX + CELL_W, worldW) - CELL_W;
+    // Canonical horizontal position inside one repeating grid cycle.
+    // Mirror copies at -1 / 0 / +1 periods guarantee that the next photos
+    // are already present before the visible copy reaches either edge.
+    const phaseX=mod(item.baseX + state.panX, worldW);
     let y=item.baseY + state.panY;
-
-    // Wrap in both directions as soon as a grid column crosses an edge.
-    // This keeps the archive continuous when dragging either left or right.
-    if(x + item.w <= 0) x += worldW;
 
     // Smooth vertical wrapping only after the full card leaves the viewport.
     while(y + item.h < 0) y += worldH;
     while(y > window.innerHeight + worldH) y -= worldH;
 
-    item.el.style.width=`${item.w}px`;
-    item.el.style.height=`${item.h}px`;
-    item.el.style.transform=`translate3d(${Math.round(x)}px,${Math.round(y)}px,0)`;
+    item.els.forEach((el,copyIndex)=>{
+      const periodOffset=copyIndex-1;
+      const x=phaseX + periodOffset*worldW;
+      el.style.width=`${item.w}px`;
+      el.style.height=`${item.h}px`;
+      el.style.transform=`translate3d(${Math.round(x)}px,${Math.round(y)}px,0)`;
+    });
   });
 }
 function createPhotoCard(row){

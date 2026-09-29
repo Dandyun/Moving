@@ -6,6 +6,13 @@
   --heading-font:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
   --body-font:"Inter",Arial,sans-serif;
 
+  /* Main controls: speed, movement, letter spacing, and dot pulse. */
+  --title-speed:4.6s;
+  --letter-gap:.085em;
+  --ving-extra-gap:.035em;
+  --wave-y:clamp(14px,1.8vw,28px);
+  --dot-speed:2.8s;
+
   --rainbow:linear-gradient(
     90deg,
     #ff3b30 0%,
@@ -43,7 +50,8 @@ a{
   position:relative;
   width:100%;
   height:100vh;
-  min-height:620px;
+  height:100svh;
+  min-height:320px;
   overflow:hidden;
   background:#000;
 }
@@ -62,17 +70,21 @@ a{
 }
 
 .hero-copy{
+  position:relative;
   width:min(82vw,1280px);
   display:flex;
   flex-direction:column;
   align-items:center;
   text-align:center;
-  transform:translateY(-1vh);
 }
 
-/* "Personal" removed */
+/* Position this independently so MOVING itself stays at viewport center. */
 .eyebrow{
-  margin:0 0 clamp(18px,2.3vh,28px);
+  position:absolute;
+  bottom:calc(100% + clamp(28px,4.8vh,56px));
+  left:0;
+  width:100%;
+  margin:0;
   font-family:var(--body-font);
   font-size:clamp(15px,1.35vw,23px);
   font-weight:300;
@@ -83,7 +95,6 @@ a{
 .glow-group{
   opacity:0;
   filter:blur(11px);
-  text-shadow:0 0 30px rgba(255,255,255,.25);
   animation:glowUp 1.35s cubic-bezier(.22,.75,.18,1) forwards .25s;
 }
 
@@ -91,19 +102,16 @@ a{
   0%{
     opacity:0;
     filter:blur(12px);
-    text-shadow:0 0 35px rgba(255,255,255,.34);
   }
 
   55%{
     opacity:.8;
     filter:blur(2px);
-    text-shadow:0 0 16px rgba(255,255,255,.18);
   }
 
   100%{
     opacity:1;
     filter:blur(0);
-    text-shadow:none;
   }
 }
 
@@ -116,62 +124,72 @@ a{
   display:flex;
   justify-content:center;
   align-items:center;
+  gap:var(--letter-gap);
 
   font-family:var(--title-font);
   font-size:clamp(80px,12vw,200px);
-  line-height:.78;
+  line-height:1;
   font-weight:400;
-  letter-spacing:0.1em;
+  letter-spacing:0;
 
   white-space:nowrap;
   color:var(--fg);
 }
 
-/*
-  The word first appears with the parent glow animation.
-  After that, each letter moves with a slight delay so the motion
-  travels from left to right like a restrained wave.
-*/
-.moving-title span{
+/* White letterforms with a different rainbow glow behind each letter. */
+.moving-letter{
   display:inline-block;
-  animation:letterWave 4.6s ease-in-out infinite;
+  flex:0 0 auto;
+  text-shadow:
+    0 .015em .04em rgba(var(--glow),.35),
+    0 .025em .12em rgba(var(--glow),.60),
+    0 .045em .25em rgba(var(--glow),.42),
+    0 .065em .42em rgba(var(--glow),.24);
+  animation:letterWave var(--title-speed) ease-in-out infinite;
+  animation-delay:var(--delay);
 }
 
-.moving-title span:nth-child(1){animation-delay:1.65s}
-.moving-title span:nth-child(2){animation-delay:1.84s}
-.moving-title span:nth-child(3){animation-delay:2.03s}
-.moving-title span:nth-child(4){animation-delay:2.22s}
-.moving-title span:nth-child(5){animation-delay:2.41s}
-.moving-title span:nth-child(6){animation-delay:2.60s}
+.moving-letter:nth-child(1){--glow:255,59,70; --delay:1.65s}
+.moving-letter:nth-child(2){--glow:255,149,0; --delay:1.84s}
+.moving-letter:nth-child(3){--glow:255,214,10; --delay:2.03s}
+.moving-letter:nth-child(4){--glow:52,215,110; --delay:2.22s}
+.moving-letter:nth-child(5){--glow:50,150,255; --delay:2.41s}
+.moving-letter:nth-child(6){--glow:175,82,255; --delay:2.60s}
 
+/* Add a little more space at V–I, I–N, and N–G. */
+.moving-letter:nth-child(n+4){
+  margin-left:var(--ving-extra-gap);
+}
+
+/* Original vertical wave, with more travel. Glow follows the same cycle:
+   highest = brightest / widest; lowest = dimmest / tightest. */
 @keyframes letterWave{
-  0%,100%{
+  0%,50%,100%{
     transform:translateY(0);
+    text-shadow:
+      0 .015em .04em rgba(var(--glow),.35),
+      0 .025em .12em rgba(var(--glow),.60),
+      0 .045em .25em rgba(var(--glow),.42),
+      0 .065em .42em rgba(var(--glow),.24);
   }
 
   25%{
-    transform:translateY(-9px);
-  }
-
-  50%{
-    transform:translateY(0);
+    transform:translateY(calc(-1 * var(--wave-y)));
+    text-shadow:
+      0 .015em .05em rgba(var(--glow),.65),
+      0 .025em .16em rgba(var(--glow),1),
+      0 .045em .34em rgba(var(--glow),.85),
+      0 .065em .60em rgba(var(--glow),.55);
   }
 
   75%{
-    transform:translateY(9px);
+    transform:translateY(var(--wave-y));
+    text-shadow:
+      0 .015em .025em rgba(var(--glow),.20),
+      0 .025em .07em rgba(var(--glow),.32),
+      0 .045em .14em rgba(var(--glow),.20),
+      0 .065em .24em rgba(var(--glow),.12);
   }
-}
-
-/* Lighter + more open subtitle */
-.subtitle{
-  margin:clamp(34px,4.5vh,52px) 0 0;
-
-  font-family:var(--heading-font);
-  font-size:clamp(17px,1.85vw,30px);
-  line-height:1.2;
-
-  font-weight:300;
-  letter-spacing:.045em;
 }
 
 /* ==========================================================
@@ -213,9 +231,7 @@ a{
 }
 
 /*
-  Sequence copied from the original landing:
-  top → right → bottom → left.
-  Top/right/bottom continue subtly collapsing and redrawing afterward.
+  Keep the original rainbow line draw / redraw timings.
 */
 .line-top{
   left:8.8vw;
@@ -332,7 +348,7 @@ a{
   top:50%;
 
   display:grid;
-  gap:clamp(30px,4vh,40px);
+  gap:clamp(0px,1.2vh,12px);
 
   transform: translateY(-50%);
 
@@ -346,31 +362,49 @@ a{
 
 .dot-link{
   position:relative;
-
-  width:clamp(12px,0.9vw,16px);
-  aspect-ratio:1;
-
+  --dot-size:clamp(12px,.9vw,16px);
+  width:44px;
+  height:44px;
   border-radius:50%;
-  background:var(--fg);
-
   transform:translateX(-50%);
-
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease;
 }
 
-.dot-link:hover,
+/* Animate the visual dot, keeping the link target and label stationary. */
+.dot-link::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:var(--dot-size);
+  height:var(--dot-size);
+  border-radius:50%;
+  background:var(--fg);
+  transform:translate(-50%,-50%);
+  animation:dotPulse var(--dot-speed) ease-in-out 4.15s infinite;
+  transition:box-shadow .18s ease;
+}
+
+/* All four dots share one timing, including while a link is hovered. */
+@keyframes dotPulse{
+  0%,100%{transform:translate(-50%,-50%) scale(.85)}
+  50%{transform:translate(-50%,-50%) scale(1.18)}
+}
+
+.dot-link:hover::before,
+.dot-link:focus-visible::before{
+  box-shadow:0 0 16px rgba(255,255,255,.4);
+}
+
 .dot-link:focus-visible{
-  transform:translateX(-50%) scale(1.18);
-  box-shadow:0 0 16px rgba(255,255,255,.28);
+  outline:1px solid var(--fg);
+  outline-offset:2px;
 }
 
 .dot-link::after{
   content:attr(data-label);
 
   position:absolute;
-  left:calc(100% + 14px);
+  left:calc(50% + var(--dot-size) / 2 + 14px);
   top:50%;
 
   transform:translateY(-50%) translateX(-6px);
@@ -410,17 +444,23 @@ a{
   }
 
   .moving-title{
-    font-size:clamp(80px,21vw,150px);
+    font-size:clamp(32px,14vw,106px);
   }
 
-  .subtitle{
-    font-size:clamp(15px,4vw,22px);
-    letter-spacing:.03em;
+  .eyebrow{
+    font-size:clamp(12px,3.3vw,18px);
   }
 
   .dot-nav{
-    gap:30px;
+    left:max(22px,4.8vw);
+    gap:0;
   }
+}
+
+/* JavaScript pauses motion when the tab is hidden. */
+.landing.is-paused *,
+.landing.is-paused *::before{
+  animation-play-state:paused!important;
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -431,7 +471,8 @@ a{
   .line-bottom,
   .line-left,
   .line::before,
-  .dot-nav{
+  .dot-nav,
+  .dot-link::before{
     animation:none!important;
   }
 

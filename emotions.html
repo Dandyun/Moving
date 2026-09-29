@@ -62,18 +62,20 @@
 
           <div class="timeline-meta">
             <p><span id="timeline-count">0</span> visible photographs</p>
-            <p id="timeline-filter-label">All filters</p>
+            <div class="timeline-meta-right">
+              <p id="timeline-filter-label">All filters</p>
+              <div class="timeline-zoom" aria-label="Timeline zoom controls">
+                <span class="timeline-zoom-label">Zoom</span>
+                <button id="timeline-zoom-out" class="timeline-zoom-button" type="button" aria-label="Zoom out timeline">−</button>
+                <span id="timeline-zoom-level" class="timeline-zoom-level">100%</span>
+                <button id="timeline-zoom-in" class="timeline-zoom-button" type="button" aria-label="Zoom in timeline">+</button>
+              </div>
+            </div>
           </div>
 
-          <div class="timeline-shell">
+          <div class="timeline-shell" id="timeline-shell">
             <svg id="timeline-chart" role="img" aria-label="Filtered emotional timeline"></svg>
             <div id="timeline-empty" class="empty-state" hidden>No photographs match the current filters.</div>
-          </div>
-
-          <div class="axis-note">
-            <span>Negative emotion</span>
-            <span>Capture time →</span>
-            <span>Positive emotion</span>
           </div>
 
           <p class="hover-note">Hover a point to preview the photograph · Click to open its details →</p>
@@ -117,7 +119,10 @@
           <div class="panel-head">
             <div>
               <p class="panel-number">03</p>
-              <h2>Emotion by Filters</h2>
+              <div class="filter-title-row">
+                <h2>Emotion by Filters</h2>
+                <span id="emotion-filter-label" class="applied-filter-label">All filters</span>
+              </div>
             </div>
             <p class="panel-description">
               Circle area and bar length change according to the number of photographs
@@ -165,50 +170,6 @@
           <div id="gallery-section" hidden>
             <p id="gallery-caption"></p>
             <div id="photo-gallery"></div>
-          </div>
-        </section>
-
-        <section class="panel compare-panel" id="compare-emotion">
-          <div class="panel-head">
-            <div>
-              <p class="panel-number">04</p>
-              <h2>Comparing Emotion</h2>
-            </div>
-            <p class="panel-description">
-              Add multiple filters to compare emotional composition. Every layer uses percentages,
-              so groups of different sizes remain comparable. Line style identifies each filter;
-              color remains reserved for emotions.
-            </p>
-          </div>
-
-          <div class="compare-controls">
-            <label class="filter compare-field">
-              <span>Compare by</span>
-              <select id="compare-dimension">
-                <option value="country">Country</option>
-                <option value="city">City</option>
-                <option value="place_type">Place type</option>
-                <option value="with_group">With group</option>
-                <option value="subject_type">Subject type</option>
-                <option value="people_visible">People visible</option>
-              </select>
-            </label>
-
-            <label class="filter compare-field">
-              <span>Value</span>
-              <select id="compare-value"></select>
-            </label>
-
-            <button id="add-comparison" class="outline-button" type="button">+ Add filter</button>
-          </div>
-
-          <div class="comparison-layout">
-            <div class="radar-shell">
-              <svg id="comparison-radar" role="img" aria-label="Radar chart comparing emotional distributions across filters"></svg>
-            </div>
-            <aside class="comparison-legend" id="comparison-legend">
-              <p class="empty-copy">Add a filter to begin comparing emotions.</p>
-            </aside>
           </div>
         </section>
 

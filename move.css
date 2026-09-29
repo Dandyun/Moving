@@ -496,3 +496,946 @@ button{
 .previous-location{
   display:none !important;
 }
+
+/* ==========================================================
+   MOVE PHYSICAL V5
+   centered map + staged load animation + random node breathing
+   + navigation matched to Emotions page
+   ========================================================== */
+
+/* Navigation: same size, position and spacing as Emotions.
+   Keep Move's black/white palette. */
+.dot-nav{
+  left:4.8vw !important;
+  top:50% !important;
+  gap:clamp(30px,4vh,40px) !important;
+  transform:translateY(-50%) !important;
+}
+
+.dot-link{
+  width:clamp(12px,.9vw,16px) !important;
+  height:auto !important;
+  aspect-ratio:1;
+  background:#fff !important;
+  border:1.4px solid #111 !important;
+  transition:transform .18s ease,box-shadow .18s ease !important;
+}
+
+.dot-link.is-active{
+  width:clamp(12px,.9vw,16px) !important;
+  height:auto !important;
+  background:#111 !important;
+  border-color:#111 !important;
+}
+
+.dot-link:hover,
+.dot-link:focus-visible{
+  transform:translateX(-50%) scale(1.18) !important;
+  box-shadow:0 0 0 4px rgba(0,0,0,.06) !important;
+}
+
+.dot-link::after{
+  padding:5px 8px !important;
+  color:#111 !important;
+  background:rgba(255,255,255,.92) !important;
+  font-size:clamp(11px,.85vw,14px) !important;
+  font-weight:300 !important;
+  letter-spacing:.04em !important;
+}
+
+/* The SVG itself is centered in the viewport by JS on initial load.
+   Country positions are symmetrical around the SVG midpoint. */
+#movement-map{
+  will-change:transform;
+}
+
+/* Only the visual circle/pie breathes; labels remain fixed and readable. */
+.node-visual{
+  transform-box:fill-box;
+  transform-origin:center;
+  will-change:transform,opacity;
+}
+
+/* Keep connector animation crisp. */
+.map-link{
+  vector-effect:non-scaling-stroke;
+}
+
+/* Prevent pulsing circles from making hover strokes look too heavy. */
+.node-group:hover .node-visual circle{
+  stroke:#111 !important;
+  stroke-width:4px !important;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .node-visual{
+    transform:none !important;
+  }
+}
+
+/* ==========================================================
+   MOVE PHYSICAL V6
+   location detail = left pie + right tinted photo grid
+   ========================================================== */
+
+.location-view{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:30 !important;
+  background:#fff !important;
+  overflow:hidden !important;
+}
+
+.location-detail-layout{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns:minmax(430px,43vw) minmax(0,1fr);
+  gap:2.8vw;
+  padding:6.5vh 4.6vw 5.3vh 10.8vw;
+}
+
+.location-left{
+  position:relative;
+  min-width:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding-top:1vh;
+}
+
+.detail-pie-wrap{
+  width:min(33vw,560px);
+  aspect-ratio:1;
+  flex:0 0 auto;
+}
+
+#emotion-pie{
+  display:block;
+  width:100%;
+  height:100%;
+  filter:none !important;
+}
+
+.pie-slice{
+  stroke:#fff !important;
+  stroke-width:4px !important;
+}
+
+.pie-label{
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  fill:#111 !important;
+  text-anchor:middle !important;
+}
+
+.pie-percent{
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+  fill:#111 !important;
+  text-anchor:middle !important;
+}
+
+.location-card{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+  width:min(31vw,500px) !important;
+  margin-top:-4px !important;
+  padding:14px 18px 15px !important;
+  border:1px solid #8e8e8e !important;
+  background:#fff !important;
+  text-align:center !important;
+  z-index:5 !important;
+}
+
+.location-type{
+  margin:0 0 3px !important;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  font-size:10px !important;
+  font-weight:600 !important;
+  letter-spacing:.1em !important;
+  color:#777 !important;
+  text-align:center !important;
+}
+
+.location-card h2{
+  margin:0 0 4px !important;
+  font-family:"fenway-banner","Fenway Banner",Georgia,serif !important;
+  font-size:clamp(42px,3.5vw,58px) !important;
+  line-height:.9 !important;
+  font-weight:400 !important;
+  text-align:center !important;
+}
+
+.location-count{
+  margin:0 !important;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  text-align:center !important;
+}
+
+.location-sub{
+  margin:5px 0 0 !important;
+  color:#777 !important;
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:11px !important;
+  line-height:1.35 !important;
+  text-align:center !important;
+}
+
+.photo-grid-panel{
+  position:relative;
+  height:100%;
+  min-width:0;
+  overflow:auto;
+  border:1px solid rgba(17,17,17,.56);
+  background:#fff;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+}
+
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(76px,1fr));
+  grid-auto-rows:minmax(88px,10.5vh);
+  width:100%;
+  min-height:100%;
+}
+
+.location-photo-tile{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  border-right:1px solid rgba(17,17,17,.52);
+  border-bottom:1px solid rgba(17,17,17,.52);
+  background:#ececec;
+}
+
+.location-photo-tile:nth-child(8n){
+  border-right:0;
+}
+
+.location-photo-tile img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  filter:saturate(.9) contrast(.96);
+  transform:scale(1.01);
+}
+
+.emotion-photo-overlay{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background:var(--emotion-overlay,#888);
+  opacity:.62;
+  mix-blend-mode:multiply;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+
+.photo-emotion-label{
+  position:absolute;
+  left:7px;
+  bottom:6px;
+  z-index:3;
+  color:#111;
+  font-family:"Inter",Arial,sans-serif;
+  font-size:8px;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.02em;
+  opacity:0;
+  transition:opacity .18s ease;
+  pointer-events:none;
+}
+
+.location-photo-tile:hover .emotion-photo-overlay{
+  opacity:.34;
+}
+
+.location-photo-tile:hover .photo-emotion-label{
+  opacity:.8;
+}
+
+.location-photo-tile.image-missing{
+  background:#eee;
+}
+
+.back-button{
+  position:absolute !important;
+  z-index:90 !important;
+  left:3.4vw !important;
+  top:5.8vh !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+  letter-spacing:.01em !important;
+  cursor:pointer !important;
+}
+
+.next-location{
+  position:absolute !important;
+  z-index:90 !important;
+  right:1.4vw !important;
+  top:50% !important;
+  width:48px !important;
+  height:96px !important;
+  transform:translateY(-50%) !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  cursor:pointer !important;
+}
+
+.next-location .arrow-head{
+  position:absolute !important;
+  left:5px !important;
+  right:auto !important;
+  top:50% !important;
+  width:42px !important;
+  height:42px !important;
+  border-top:1.6px solid #111 !important;
+  border-right:1.6px solid #111 !important;
+  transform:translateY(-50%) rotate(45deg) !important;
+}
+
+.arrow-line,
+.next-label{
+  display:none !important;
+}
+
+/* Old orbit/detail positioning is no longer used. */
+.photo-orbit,
+.pie-center{
+  display:none !important;
+}
+
+@media(max-width:1100px){
+  .location-detail-layout{
+    grid-template-columns:minmax(350px,40vw) minmax(0,1fr);
+    gap:2vw;
+    padding-left:11.5vw;
+  }
+
+  .detail-pie-wrap{
+    width:min(35vw,470px);
+  }
+
+  .photo-grid{
+    grid-template-columns:repeat(6,minmax(70px,1fr));
+  }
+
+  .location-photo-tile:nth-child(8n){
+    border-right:1px solid rgba(17,17,17,.52);
+  }
+
+  .location-photo-tile:nth-child(6n){
+    border-right:0;
+  }
+}
+
+/* ==========================================================
+   MOVE PHYSICAL V7
+   black location view / sample-inspired left info + pie
+   adaptive ranked photo mosaic
+   ========================================================== */
+
+/* DETAIL BACKGROUND */
+.location-view{
+  background:#050505 !important;
+  color:#fff !important;
+}
+
+/* Layout: slimmer left summary column + wider photo box. */
+.location-detail-layout{
+  grid-template-columns:minmax(300px,29vw) minmax(0,1fr) !important;
+  gap:1.55vw !important;
+  padding:5.4vh 3.5vw 5.4vh 8.7vw !important;
+}
+
+.location-left{
+  height:100% !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  padding:4.2vh 0 0 !important;
+  color:#fff !important;
+}
+
+/* Location information sits above the pie, like the reference image. */
+.location-card{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 1vw !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#fff !important;
+  text-align:center !important;
+}
+
+.location-type{
+  margin:0 0 5px !important;
+  color:rgba(255,255,255,.62) !important;
+  font-size:10px !important;
+  font-weight:600 !important;
+  letter-spacing:.11em !important;
+}
+
+.location-card h2{
+  margin:0 0 5px !important;
+  color:#fff !important;
+  font-size:clamp(46px,3.7vw,62px) !important;
+  line-height:.86 !important;
+}
+
+.location-count{
+  margin:0 !important;
+  color:#fff !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+}
+
+.location-sub{
+  margin:6px 0 0 !important;
+  color:rgba(255,255,255,.58) !important;
+  font-size:11px !important;
+  line-height:1.35 !important;
+}
+
+/* Smaller pie, shifted toward the left edge. */
+.detail-pie-wrap{
+  width:min(23.5vw,365px) !important;
+  aspect-ratio:1 !important;
+  align-self:flex-start !important;
+  margin-top:5.6vh !important;
+  margin-left:-.3vw !important;
+}
+
+#emotion-pie{
+  width:100% !important;
+  height:100% !important;
+  filter:none !important;
+}
+
+.pie-slice{
+  stroke:#050505 !important;
+  stroke-width:3px !important;
+}
+
+.pie-label{
+  font-size:11px !important;
+  fill:#111 !important;
+}
+
+.pie-percent{
+  font-size:10px !important;
+  fill:#111 !important;
+}
+
+/* PHOTO MOSAIC — dimensions adapt per location, no fixed 8×N grid. */
+.photo-grid-panel{
+  position:relative !important;
+  height:100% !important;
+  min-width:0 !important;
+  overflow:hidden !important;
+  border:1px solid rgba(255,255,255,.42) !important;
+  background:#050505 !important;
+  scrollbar-width:none !important;
+}
+
+.photo-grid-panel::-webkit-scrollbar{
+  display:none;
+}
+
+.photo-grid{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-content:stretch !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
+
+.location-photo-tile{
+  position:relative !important;
+  flex:1 0 calc(100% / var(--grid-cols,8)) !important;
+  width:auto !important;
+  height:calc(100% / var(--grid-rows,6)) !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  border-right:1px solid rgba(255,255,255,.20) !important;
+  border-bottom:1px solid rgba(255,255,255,.20) !important;
+  background:#111 !important;
+}
+
+.location-photo-tile img{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  filter:saturate(.72) contrast(1.05) brightness(.84) !important;
+  transform:scale(1.015) !important;
+}
+
+/* Stronger overlay so emotion groups are immediately readable. */
+.emotion-photo-overlay{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:2 !important;
+  background:var(--emotion-overlay,#888) !important;
+  opacity:.80 !important;
+  mix-blend-mode:normal !important;
+  pointer-events:none !important;
+  transition:opacity .18s ease !important;
+}
+
+.location-photo-tile:hover .emotion-photo-overlay{
+  opacity:.58 !important;
+}
+
+.photo-emotion-label{
+  color:#fff !important;
+  text-shadow:0 1px 3px rgba(0,0,0,.75);
+}
+
+.location-photo-tile.image-missing{
+  background:#161616 !important;
+}
+
+/* Back button: invert for the black detail screen. */
+.back-button{
+  left:2.8vw !important;
+  top:5.4vh !important;
+  color:#fff !important;
+  background:transparent !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+}
+
+/* Smaller but heavier chevron. */
+.next-location{
+  right:1.0vw !important;
+  width:40px !important;
+  height:76px !important;
+  background:transparent !important;
+}
+
+.next-location .arrow-head{
+  left:7px !important;
+  width:29px !important;
+  height:29px !important;
+  border-top:2.6px solid #fff !important;
+  border-right:2.6px solid #fff !important;
+}
+
+/* Navigation inversion only while a location page is open.
+   Main Physical Movement Map keeps its original white-page treatment. */
+.move-page.detail-open .dot-link{
+  background:#050505 !important;
+  border-color:#fff !important;
+}
+
+.move-page.detail-open .dot-link.is-active{
+  background:#fff !important;
+  border-color:#fff !important;
+}
+
+.move-page.detail-open .dot-link:hover,
+.move-page.detail-open .dot-link:focus-visible{
+  box-shadow:0 0 0 4px rgba(255,255,255,.13) !important;
+}
+
+.move-page.detail-open .dot-link::after{
+  color:#fff !important;
+  background:rgba(5,5,5,.94) !important;
+}
+
+/* Keep the nav above the dark detail page. */
+.move-page.detail-open .dot-nav{
+  z-index:120 !important;
+}
+
+@media(max-width:1100px){
+  .location-detail-layout{
+    grid-template-columns:minmax(275px,31vw) minmax(0,1fr) !important;
+    gap:1.3vw !important;
+    padding-left:9.8vw !important;
+    padding-right:3.8vw !important;
+  }
+
+  .detail-pie-wrap{
+    width:min(25vw,330px) !important;
+    margin-top:5vh !important;
+  }
+}
+
+/* ==========================================================
+   MOVE PHYSICAL V8
+   centered pie + percentage-only labels + emotion legend
+   + progressive photo loading
+   ========================================================== */
+
+/* Align the entire left column cleanly on one center axis. */
+.location-left{
+  align-items:center !important;
+  padding-top:4.0vh !important;
+}
+
+.location-card{
+  width:100% !important;
+  max-width:420px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  text-align:center !important;
+}
+
+.location-card h2,
+.location-type,
+.location-count,
+.location-sub{
+  text-align:center !important;
+}
+
+/* Pie sits directly beneath the country/city information and is centered. */
+.detail-pie-wrap{
+  width:min(22vw,340px) !important;
+  align-self:center !important;
+  margin:5.2vh auto 0 !important;
+}
+
+.pie-percent-only{
+  fill:#111 !important;
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:13px !important;
+  font-weight:650 !important;
+  text-anchor:middle !important;
+  dominant-baseline:middle !important;
+  pointer-events:none !important;
+}
+
+/* Hide legacy label styles if any remain from an older cached file. */
+.pie-label,
+.pie-percent{
+  display:none !important;
+}
+
+/* Emotion color scale beneath the pie. */
+.emotion-legend{
+  width:min(26vw,430px);
+  margin:2.5vh auto 0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:14px;
+  color:#fff;
+  font-family:"Inter",Arial,sans-serif;
+}
+
+.emotion-legend-title{
+  flex:0 0 auto;
+  padding-top:3px;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.1em;
+  white-space:nowrap;
+  color:rgba(255,255,255,.72);
+}
+
+.emotion-legend-items{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  gap:5px 13px;
+}
+
+.emotion-legend-item{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:9px;
+  font-weight:400;
+  line-height:1.2;
+  white-space:nowrap;
+  color:rgba(255,255,255,.88);
+}
+
+.emotion-legend-item i{
+  display:block;
+  width:7px;
+  height:7px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:var(--legend-color);
+}
+
+/* Grid color structure is visible instantly;
+   photos fade in progressively as each file finishes decoding. */
+.location-photo-tile{
+  background:#151515 !important;
+}
+
+.progressive-photo{
+  opacity:0;
+  transition:opacity .28s ease;
+}
+
+.location-photo-tile.is-loaded .progressive-photo{
+  opacity:1;
+}
+
+.emotion-photo-overlay{
+  opacity:.82 !important;
+}
+
+.location-photo-tile:hover .emotion-photo-overlay{
+  opacity:.62 !important;
+}
+
+@media(max-width:1100px){
+  .detail-pie-wrap{
+    width:min(24vw,310px) !important;
+  }
+
+  .emotion-legend{
+    width:min(29vw,390px);
+    gap:10px;
+  }
+
+  .emotion-legend-items{
+    gap:4px 9px;
+  }
+}
+
+/* ==========================================================
+   MOVE PHYSICAL V9
+   faster photo fill + legend-only scale + all emotion counts
+   ========================================================== */
+
+/* All eight emotion counts can wrap onto two compact centered lines. */
+.location-sub{
+  max-width:460px !important;
+  margin:7px auto 0 !important;
+  padding:0 8px !important;
+  font-size:10px !important;
+  line-height:1.55 !important;
+  text-align:center !important;
+  white-space:normal !important;
+}
+
+/* Legend = scale only. No "EMOTION COLOR" heading. */
+.emotion-legend{
+  width:min(27vw,440px) !important;
+  margin:2.3vh auto 0 !important;
+  display:block !important;
+}
+
+.emotion-legend-title{
+  display:none !important;
+}
+
+.emotion-legend-items{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  justify-content:center !important;
+  align-items:center !important;
+  gap:6px 14px !important;
+  width:100% !important;
+}
+
+.emotion-legend-item{
+  font-size:9px !important;
+}
+
+.emotion-legend-item i{
+  width:8px !important;
+  height:8px !important;
+}
+
+/* Photos appear immediately when decoded instead of using a long fade. */
+.progressive-photo{
+  opacity:0 !important;
+  transition:opacity .10s linear !important;
+  will-change:opacity;
+}
+
+.location-photo-tile.is-loaded .progressive-photo{
+  opacity:1 !important;
+}
+
+@media(max-width:1100px){
+  .location-sub{
+    max-width:360px !important;
+    font-size:9px !important;
+  }
+
+  .emotion-legend{
+    width:min(31vw,390px) !important;
+  }
+}
+
+/* ==========================================================
+   MOVE PHYSICAL V10
+   stronger breathing + photo hover metadata preview
+   ========================================================== */
+
+/* Floating preview for photos in the location mosaic. */
+.photo-hover-preview{
+  position:fixed;
+  z-index:1000;
+  width:210px;
+  padding:8px;
+  background:#fff;
+  color:#111;
+  border:1px solid rgba(17,17,17,.85);
+  box-shadow:0 12px 32px rgba(0,0,0,.26);
+  pointer-events:none;
+}
+
+.photo-hover-preview[hidden]{
+  display:none !important;
+}
+
+.photo-hover-image-wrap{
+  width:100%;
+  height:142px;
+  overflow:hidden;
+  background:#e8e8e8;
+}
+
+.photo-hover-image-wrap img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.photo-hover-meta{
+  padding:9px 4px 3px;
+}
+
+.photo-hover-id{
+  margin:0 0 8px;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.1;
+}
+
+.photo-hover-meta dl{
+  margin:0;
+}
+
+.photo-hover-meta dl div{
+  display:grid;
+  grid-template-columns:72px 1fr;
+  gap:8px;
+  padding:4px 0;
+  border-top:1px solid rgba(17,17,17,.16);
+}
+
+.photo-hover-meta dt{
+  margin:0;
+  color:#777;
+  font-family:"Inter",Arial,sans-serif;
+  font-size:8px;
+  font-weight:500;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.photo-hover-meta dd{
+  margin:0;
+  color:#111;
+  font-family:"Inter",Arial,sans-serif;
+  font-size:9px;
+  line-height:1.25;
+}
+
+/* The source tile remains readable beneath the preview interaction. */
+.location-photo-tile{
+  cursor:crosshair;
+}
+
+/* ==========================================================
+   MOVE — RAINBOW MAP CONNECTORS
+   ========================================================== */
+
+/* SVG assigns the actual gradient stroke inline.
+   Do not override it with the legacy gray .map-link stroke. */
+.rainbow-map-link{
+  stroke-width:1.7 !important;
+  stroke-linecap:round !important;
+  opacity:.92;
+}
+
+/* The title no longer has a section number above it. */
+.map-header > div{
+  padding-top:0 !important;
+}
+
+/* ==========================================================
+   MOVE — RAINBOW CONNECTORS V2
+   force-visible gradient + subtle glow
+   ========================================================== */
+
+.rainbow-map-link{
+  stroke-width:2.6px !important;
+  stroke-linecap:round !important;
+  opacity:1 !important;
+  filter:drop-shadow(0 0 1.4px rgba(80,80,80,.16));
+}
+
+/* Disable any old gray stroke rule from winning. */
+.map-link.rainbow-map-link{
+  stroke:inherit;
+}
+
+/* ==========================================================
+   MOVE — INTRO RAINBOW ONLY
+   Resting state returns to the original connector design.
+   ========================================================== */
+
+.map-link,
+.map-link.rainbow-map-link{
+  stroke:#a8a49c !important;
+  stroke-width:1.2px !important;
+  stroke-linecap:butt !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+
+/* ==========================================================
+   MOVE — TITLE SIZE MATCHED TO EMOTIONS
+   ========================================================== */
+
+.map-header h1{
+  font-size:clamp(42px,4.2vw,70px) !important;
+  line-height:.95 !important;
+}

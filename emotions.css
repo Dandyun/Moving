@@ -1043,3 +1043,251 @@ dt,
 @media(max-width:780px){
   .global-filter-drawer{width:min(92vw,430px) !important;min-width:0 !important}
 }
+
+
+/* ==========================================================
+   EMOTIONS V5 — side filter + zoomable Emotional Movement
+   ========================================================== */
+
+/* Fixed vertical FILTER tab at the exact middle of the right edge. */
+.global-filter-button{
+  top:50% !important;
+  right:0 !important;
+  transform:translateY(-50%) !important;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  padding:14px 9px !important;
+  min-width:34px;
+  border-right:0 !important;
+  font-weight:400 !important;
+  letter-spacing:.09em !important;
+}
+
+/* Applied filters shown directly beside the 03 title. */
+.filter-title-row{
+  display:flex;
+  align-items:flex-end;
+  gap:18px;
+  min-width:0;
+}
+.applied-filter-label{
+  display:block;
+  max-width:min(42vw,560px);
+  padding-bottom:5px;
+  color:#8f8f8f;
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:10px;
+  font-weight:400;
+  line-height:1.35;
+  letter-spacing:.045em;
+  white-space:normal;
+}
+
+/* Timeline meta / zoom controls. */
+.timeline-meta{
+  align-items:flex-end !important;
+  margin:8px 0 7px !important;
+}
+.timeline-meta-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:7px;
+  min-width:220px;
+}
+#timeline-filter-label{
+  margin:0;
+  color:#8f8f8f !important;
+  font-size:10px;
+  font-weight:400;
+  line-height:1.25;
+  text-align:right;
+}
+.timeline-zoom{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  color:#aaa;
+}
+.timeline-zoom-label{
+  margin-right:2px;
+  font-size:9px;
+  font-weight:400;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.timeline-zoom-button{
+  display:grid;
+  place-items:center;
+  width:25px;
+  height:25px;
+  padding:0;
+  border:1px solid #555;
+  border-radius:50%;
+  background:transparent;
+  color:#fff;
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:17px;
+  font-weight:300;
+  line-height:1;
+  cursor:pointer;
+  transition:border-color .16s ease,background .16s ease,opacity .16s ease;
+}
+.timeline-zoom-button:hover:not(:disabled){
+  border-color:#fff;
+  background:#111;
+}
+.timeline-zoom-button:disabled{
+  opacity:.28;
+  cursor:default;
+}
+.timeline-zoom-level{
+  min-width:39px;
+  color:#8f8f8f;
+  font-size:9px;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+}
+
+/* Fixed viewport; the SVG itself gets wider when zoomed and scrolls inside. */
+.timeline-shell{
+  height:68vh !important;
+  min-height:0 !important;
+  border-bottom:0 !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:#555 transparent;
+}
+.timeline-shell::-webkit-scrollbar{height:5px}
+.timeline-shell::-webkit-scrollbar-track{background:transparent}
+.timeline-shell::-webkit-scrollbar-thumb{background:#555;border-radius:999px}
+#timeline-chart{
+  display:block !important;
+  width:auto !important;
+  min-width:100% !important;
+  height:100% !important;
+  overflow:visible !important;
+}
+.axis-note{display:none !important}
+.hover-note{margin-top:6px !important}
+
+@media(max-width:780px){
+  .filter-title-row{align-items:flex-start;flex-direction:column;gap:7px}
+  .applied-filter-label{max-width:75vw;padding-bottom:0}
+  .timeline-meta-right{min-width:160px}
+}
+
+
+/* ==========================================================
+   EMOTIONS V7 — fixed Jun 2023–Jun 2026 axis + larger zoom text
+   ========================================================== */
+.timeline-zoom,
+.timeline-zoom-label,
+.timeline-zoom-level,
+.timeline-zoom-button{
+  font-family:"Inter",Arial,sans-serif !important;
+}
+.timeline-zoom{
+  gap:6px !important;
+  font-size:8px !important;
+  letter-spacing:.12em !important;
+}
+.timeline-zoom-label{
+  margin-right:1px !important;
+  font-size:10px !important;
+  font-weight:400 !important;
+  letter-spacing:.12em !important;
+}
+.timeline-zoom-level{
+  min-width:38px !important;
+  font-size:10px !important;
+  font-weight:400 !important;
+  letter-spacing:.08em !important;
+}
+.timeline-zoom-button{
+  width:22px !important;
+  height:22px !important;
+  font-size:14px !important;
+  font-weight:300 !important;
+}
+
+/* ==========================================================
+   EMOTIONS — PHOTO PREVIEW CARD
+   Match the floating preview used on the Move page.
+   ========================================================== */
+
+.tooltip.is-photo-preview{
+  position:fixed !important;
+  z-index:1000 !important;
+  width:210px !important;
+  padding:8px !important;
+  background:#fff !important;
+  color:#111 !important;
+  border:1px solid rgba(17,17,17,.85) !important;
+  box-shadow:0 12px 32px rgba(0,0,0,.26) !important;
+  pointer-events:none !important;
+  overflow:hidden !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-image-wrap{
+  width:100% !important;
+  height:142px !important;
+  overflow:hidden !important;
+  background:#e8e8e8 !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-image-wrap img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-meta{
+  padding:9px 4px 3px !important;
+  color:#111 !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-id{
+  margin:0 0 8px !important;
+  color:#111 !important;
+  font-family:"neue-haas-grotesk-display","Neue Haas Grotesk","Helvetica Neue",Arial,sans-serif !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+  line-height:1.1 !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-meta dl{
+  margin:0 !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-meta dl div{
+  display:grid !important;
+  grid-template-columns:72px 1fr !important;
+  gap:8px !important;
+  padding:4px 0 !important;
+  border-top:1px solid rgba(17,17,17,.16) !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-meta dt{
+  margin:0 !important;
+  color:#777 !important;
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:8px !important;
+  font-weight:500 !important;
+  letter-spacing:.04em !important;
+  line-height:1.25 !important;
+  text-transform:uppercase !important;
+}
+
+.tooltip.is-photo-preview .photo-hover-meta dd{
+  margin:0 !important;
+  color:#111 !important;
+  font-family:"Inter",Arial,sans-serif !important;
+  font-size:9px !important;
+  font-weight:400 !important;
+  line-height:1.25 !important;
+}

@@ -33,6 +33,9 @@
   ];
 
   const RADAR_MAX = .75;
+  const TIMELINE_ZOOM_LEVELS = [1, 1.5, 2, 3, 4, 6, 8];
+  const TIMELINE_START = new Date(2023, 5, 1); // June 1, 2023
+  const TIMELINE_END = new Date(2026, 6, 1);   // July 1, 2026 (exclusive, so all of June is included)
 
   const FILTER_CONFIG = [
     { key: "country", id: "country-filter", label: "All countries" },
@@ -48,7 +51,8 @@
     filters: Object.fromEntries(FILTER_CONFIG.map((item) => [item.key, "all"])),
     selectedEmotion: null,
     selectedPhotoId: null,
-    comparisons: []
+    comparisons: [],
+    timelineZoom: 1
   };
 
   const elements = {
@@ -66,7 +70,12 @@
     galleryCaption: document.querySelector("#gallery-caption"),
     timelineCount: document.querySelector("#timeline-count"),
     timelineFilterLabel: document.querySelector("#timeline-filter-label"),
+    emotionFilterLabel: document.querySelector("#emotion-filter-label"),
     timelineEmpty: document.querySelector("#timeline-empty"),
+    timelineShell: document.querySelector("#timeline-shell"),
+    timelineZoomIn: document.querySelector("#timeline-zoom-in"),
+    timelineZoomOut: document.querySelector("#timeline-zoom-out"),
+    timelineZoomLevel: document.querySelector("#timeline-zoom-level"),
     tooltip: document.querySelector("#tooltip"),
     compareDimension: document.querySelector("#compare-dimension"),
     compareValue: document.querySelector("#compare-value"),
@@ -123,7 +132,7 @@
 
     elements.status.textContent = `${state.allData.length.toLocaleString()} photographs loaded`;
     refreshDependentFilters();
-    updateCompareValues();
+    if (elements.compareDimension && elements.compareValue) updateCompareValues();
     renderAll();
   }
 
@@ -241,29 +250,45 @@
       renderAll();
     });
 
-    elements.compareDimension.addEventListener("change", updateCompareValues);
+    if (elements.compareDimension) {
+      elements.compareDimension.addEventListener("change", updateCompareValues);
+    }
 
-    elements.addComparison.addEventListener("click", () => {
-      const dimension = elements.compareDimension.value;
-      const value = elements.compareValue.value;
-      if (!value) return;
+    if (elements.addComparison) {
+      elements.addComparison.addEventListener("click", () => {
+        const dimension = elements.compareDimension?.value;
+        const value = elements.compareValue?.value;
+        if (!dimension || !value) return;
 
-      const id = `${dimension}:${value}`;
-      if (state.comparisons.some((item) => item.id === id)) return;
-      if (state.comparisons.length >= COMPARISON_STYLES.length) {
-        alert(`You can compare up to ${COMPARISON_STYLES.length} filters at once.`);
-        return;
-      }
+        const id = `${dimension}:${value}`;
+        if (state.comparisons.some((item) => item.id === id)) return;
+        if (state.comparisons.length >= COMPARISON_STYLES.length) {
+          alert(`You can compare up to ${COMPARISON_STYLES.length} filters at once.`);
+          return;
+        }
 
-      state.comparisons.push({ id, dimension, value });
-      renderComparison();
-    });
+        state.comparisons.push({ id, dimension, value });
+        renderComparison();
+      });
+    }
+
+    elements.timelineZoomIn?.addEventListener("click", () => changeTimelineZoom(1));
+    elements.timelineZoomOut?.addEventListener("click", () => changeTimelineZoom(-1));
+
+    elements.timelineShell?.addEventListener("wheel", (event) => {
+      const shell = elements.timelineShell;
+      if (state.timelineZoom <= 1 || shell.scrollWidth <= shell.clientWidth + 2) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      shell.scrollLeft += delta;
+    }, { passive: false });
 
     window.addEventListener("resize", debounce(() => {
       if (!state.allData.length) return;
       drawEmotionBubbles();
       drawEmotionBars();
-      drawComparisonRadar();
+      if (document.querySelector("#comparison-radar")) drawComparisonRadar();
       drawTimeline();
     }, 180));
   }
@@ -577,7 +602,7 @@
   // 02. Comparison radar — add any number of filter layers (up to color limit).
   // ---------------------------------------------------------------------------
   function updateCompareValues() {
-    if (!state.allData.length) return;
+    if (!state.allData.length || !elements.compareDimension || !elements.compareValue) return;
     const dimension = elements.compareDimension.value;
     const values = unique(state.allData.map((row) => row[dimension]));
     elements.compareValue.innerHTML = "";
@@ -595,6 +620,7 @@
   }
 
   function renderComparisonLegend() {
+    if (!elements.comparisonLegend) return;
     elements.comparisonLegend.innerHTML = "";
     const legendTitle = document.createElement("p");
     legendTitle.className = "comparison-legend-title";
@@ -686,6 +712,7 @@
 
   function drawComparisonRadar() {
     const svg = d3.select("#comparison-radar");
+    if (svg.empty()) return;
     const node = svg.node();
     const width = Math.max(520, node.clientWidth || 760);
     const height = Math.max(720, node.clientHeight || 720);
@@ -764,45 +791,110 @@
   // 03. Emotional timeline. Current filters + optional selected emotion apply.
   // Clicking a point opens the actual image and all metadata below the chart.
   // ---------------------------------------------------------------------------
+  function changeTimelineZoom(direction) {
+    const currentIndex = Math.max(0, TIMELINE_ZOOM_LEVELS.indexOf(state.timelineZoom));
+    const nextIndex = clamp(currentIndex + direction, 0, TIMELINE_ZOOM_LEVELS.length - 1);
+    const nextZoom = TIMELINE_ZOOM_LEVELS[nextIndex];
+    if (nextZoom === state.timelineZoom) return;
+
+    const shell = elements.timelineShell;
+    const oldWidth = shell?.scrollWidth || 1;
+    const centerRatio = shell
+      ? (shell.scrollLeft + shell.clientWidth / 2) / oldWidth
+      : .5;
+
+    state.timelineZoom = nextZoom;
+    drawTimeline();
+
+    requestAnimationFrame(() => {
+      if (!shell) return;
+      const maxScroll = Math.max(0, shell.scrollWidth - shell.clientWidth);
+      shell.scrollLeft = clamp(centerRatio * shell.scrollWidth - shell.clientWidth / 2, 0, maxScroll);
+    });
+  }
+
+  function updateTimelineZoomUI() {
+    const index = Math.max(0, TIMELINE_ZOOM_LEVELS.indexOf(state.timelineZoom));
+    if (elements.timelineZoomLevel) {
+      elements.timelineZoomLevel.textContent = `${Math.round(state.timelineZoom * 100)}%`;
+    }
+    if (elements.timelineZoomOut) elements.timelineZoomOut.disabled = index <= 0;
+    if (elements.timelineZoomIn) elements.timelineZoomIn.disabled = index >= TIMELINE_ZOOM_LEVELS.length - 1;
+  }
+
   function drawTimeline() {
     const rows = filteredRows({ includeSelectedEmotion: true })
       .filter((row) => row.emotion_score !== null)
       .sort((a, b) => a.datetime - b.datetime);
 
     elements.timelineCount.textContent = rows.length.toLocaleString();
+    updateTimelineZoomUI();
 
     const svg = d3.select("#timeline-chart");
     const node = svg.node();
-    const width = Math.max(720, node.clientWidth || 1200);
-    const height = 560;
-    const margin = { top: 34, right: 28, bottom: 56, left: 50 };
-    svg.attr("viewBox", `0 0 ${width} ${height}`);
+    const shell = elements.timelineShell;
+    const viewportWidth = Math.max(720, shell?.clientWidth || node.clientWidth || 1200);
+    const contentWidth = Math.max(viewportWidth, Math.round(viewportWidth * state.timelineZoom));
+    const height = Math.max(500, shell?.clientHeight || node.clientHeight || 560);
+    const margin = { top: 26, right: 28, bottom: 52, left: 50 };
+
+    svg
+      .attr("viewBox", `0 0 ${contentWidth} ${height}`)
+      .attr("width", contentWidth)
+      .attr("height", height)
+      .style("width", `${contentWidth}px`)
+      .style("height", `${height}px`);
     svg.selectAll("*").remove();
 
     elements.timelineEmpty.hidden = rows.length > 0;
     if (!rows.length) return;
 
-    let extent = d3.extent(rows, (d) => d.datetime);
-    if (+extent[0] === +extent[1]) {
-      extent = [d3.timeDay.offset(extent[0], -1), d3.timeDay.offset(extent[1], 1)];
-    }
+    // Keep the Emotional Movement timeline fixed to the archive period:
+    // June 2023 through June 2026, regardless of the current filters.
+    const extent = [TIMELINE_START, TIMELINE_END];
 
-    const x = d3.scaleTime().domain(extent).range([margin.left, width - margin.right]);
+    const x = d3.scaleTime().domain(extent).range([margin.left, contentWidth - margin.right]);
     const y = d3.scaleLinear().domain([-5, 5]).range([height - margin.bottom, margin.top]);
 
     [-5, -3, -1, 0, 1, 3, 5].forEach((value) => {
       svg.append("line")
         .attr("class", value === 0 ? "timeline-zero" : "timeline-grid")
         .attr("x1", margin.left)
-        .attr("x2", width - margin.right)
+        .attr("x2", contentWidth - margin.right)
         .attr("y1", y(value))
         .attr("y2", y(value));
     });
 
+    let xAxis;
+    if (state.timelineZoom <= 1) {
+      // At 100%, show one anchor per archive year. The first tick starts
+      // exactly at June 2023 and the last one sits at June 2026.
+      const yearTicks = [2023, 2024, 2025, 2026].map((year) => new Date(year, 5, 1));
+      xAxis = d3.axisBottom(x)
+        .tickValues(yearTicks)
+        .tickFormat(d3.timeFormat("%Y"))
+        .tickSizeOuter(0);
+    } else {
+      // Once zoomed in, switch to month labels such as “23 June”.
+      // Building the ticks from the fixed archive start keeps the labels
+      // aligned with June 2023 instead of snapping to January.
+      const months = d3.timeMonth.range(TIMELINE_START, TIMELINE_END);
+      const targetTickCount = Math.max(7, Math.floor(contentWidth / 120));
+      const monthStep = Math.max(1, Math.ceil(months.length / targetTickCount));
+      const monthTicks = months.filter((_, index) => index % monthStep === 0);
+      if (+monthTicks[monthTicks.length - 1] !== +new Date(2026, 5, 1)) {
+        monthTicks.push(new Date(2026, 5, 1));
+      }
+      xAxis = d3.axisBottom(x)
+        .tickValues(monthTicks)
+        .tickFormat(d3.timeFormat("%y %B"))
+        .tickSizeOuter(0);
+    }
+
     svg.append("g")
       .attr("class", "timeline-axis")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).ticks(Math.min(8, Math.floor(width / 140))).tickSizeOuter(0));
+      .call(xAxis);
 
     svg.append("g")
       .attr("class", "timeline-axis")
@@ -829,7 +921,7 @@
       .attr("cy", (d) => y(d.emotion_score))
       .attr("r", 6)
       .attr("fill", (d) => emotionColor(d.emotion))
-      .on("mouseenter", (event, d) => showTooltip(event, photoTooltip(d)))
+      .on("mouseenter", (event, d) => showTooltip(event, photoTooltip(d), "photo"))
       .on("mousemove", moveTooltip)
       .on("mouseleave", hideTooltip)
       .on("click", (_, d) => {
@@ -841,10 +933,13 @@
 
   function updateTimelineFilterLabel() {
     const active = FILTER_CONFIG
-      .map(({ key }) => state.filters[key] === "all" ? null : state.filters[key])
+      .map(({ key }) => state.filters[key] === "all" ? null : `${humanizeKey(key)}: ${state.filters[key]}`)
       .filter(Boolean);
-    if (state.selectedEmotion) active.push(state.selectedEmotion);
-    elements.timelineFilterLabel.textContent = active.length ? active.join(" · ") : "All filters";
+    if (state.selectedEmotion) active.push(`Emotion: ${state.selectedEmotion}`);
+
+    const label = active.length ? active.join(" · ") : "All filters";
+    elements.timelineFilterLabel.textContent = label;
+    if (elements.emotionFilterLabel) elements.emotionFilterLabel.textContent = label;
   }
 
   function selectPhoto(row) {
@@ -1058,16 +1153,31 @@
   function photoTooltip(row) {
     const src = imagePath(row.filename);
     return `
-      <img class="tooltip-preview" src="${src}" alt="${escapeHtml(row.photo_id)} preview" onerror="this.style.display='none'">
-      <div class="tooltip-copy">
-        <strong>${escapeHtml(row.photo_id)}</strong>
-        ${formatDate(row.datetime)} · ${escapeHtml(row.city)}<br>
-        <span class="tooltip-muted">${escapeHtml(row.emotion)} ${formatScore(row.emotion_score)}</span>
+      <div class="photo-hover-image-wrap">
+        <img src="${src}" alt="${escapeHtml(row.photo_id)} preview" onerror="this.style.display='none'">
+      </div>
+      <div class="photo-hover-meta">
+        <p class="photo-hover-id">${escapeHtml(row.photo_id)}</p>
+        <dl>
+          <div>
+            <dt>Date</dt>
+            <dd>${formatDate(row.datetime)}</dd>
+          </div>
+          <div>
+            <dt>Emotion</dt>
+            <dd>${escapeHtml(row.emotion || "—")}</dd>
+          </div>
+          <div>
+            <dt>Emotion score</dt>
+            <dd>${formatScore(row.emotion_score)}</dd>
+          </div>
+        </dl>
       </div>
     `;
   }
 
-  function showTooltip(event, html) {
+  function showTooltip(event, html, type = "") {
+    elements.tooltip.classList.toggle("is-photo-preview", type === "photo");
     elements.tooltip.innerHTML = html;
     elements.tooltip.hidden = false;
     moveTooltip(event);
@@ -1087,6 +1197,7 @@
 
   function hideTooltip() {
     elements.tooltip.hidden = true;
+    elements.tooltip.classList.remove("is-photo-preview");
   }
 
   function clamp(value, min, max) {
@@ -1152,7 +1263,7 @@
     if (!horizontalTrack) return;
 
     const target = event.target;
-    if (target && (target.closest("select") || target.closest(".filter-panel") || target.closest(".comparison-legend"))) {
+    if (target && (target.closest("select") || target.closest(".filter-panel") || target.closest(".comparison-legend") || (target.closest(".timeline-shell") && state.timelineZoom > 1))) {
       return;
     }
 
@@ -1172,6 +1283,6 @@
   });
 
   window.addEventListener("resize", debounce(measureHorizontal, 120));
-  document.addEventListener("DOMContentLoaded", () => { setTimeout(measureHorizontal, 0); setTimeout(() => { if (!state.comparisons || !state.comparisons.length) drawEmptyComparisonRadar(); }, 60); });
+  document.addEventListener("DOMContentLoaded", () => { setTimeout(measureHorizontal, 0); setTimeout(() => { if (document.querySelector("#comparison-radar") && (!state.comparisons || !state.comparisons.length)) drawEmptyComparisonRadar(); }, 60); });
 
 })();
